@@ -59,7 +59,7 @@ app.get('/', function (req, res) {
     });
 });
 //-----------------------------//
-const running_port = process.env.PORT || 8080;
+const running_port = process.env.PORT || 80;
 
 http.createServer({}, app).listen(running_port);
 
