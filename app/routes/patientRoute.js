@@ -1,4 +1,5 @@
 var express = require('express');
+var voucher_codes = require('voucher-code-generator');
 
 module.exports = function(Patient){
     var patientRouter = express.Router();
@@ -9,6 +10,13 @@ module.exports = function(Patient){
         patient.nationalId = req.body.nationalId;
         patient.mobile = req.body.mobile;
         patient.registeredBy = req.decoded._doc._id;
+        patient.package = req.body.package;
+        patient.offer = req.body.offer;
+        const code = voucher_codes.generate({
+            length: 8,
+            count: 1
+        });
+        patient.couponCode = code[0].toUpperCase();
         patient.save(function(err) {
             if(!err){
                 res.status(200).send({
@@ -50,6 +58,34 @@ module.exports = function(Patient){
                         eng: 'Patients retreived successfully.'
                     },
                     data: user
+                });
+            }
+        });
+    });
+    patientRouter.get('/markCouponUsed', function(req, res){
+        var patientId = req.query.patientId;
+        Patient.update({_id: patientId}, {
+            $set: {
+                isCouponUsed: true
+            }
+        }, function (err, patient) {
+            if(err){
+                res.status(200).send({
+                    status: 411,
+                    success: false,
+                    message: {
+                        eng: 'Server error.',
+                    },
+                    error: err
+                });
+            } else {
+                res.status(200).send({
+                    status: 200,
+                    success: true,
+                    message: {
+                        eng: 'Patients updated successfully.'
+                    },
+                    data: patient
                 });
             }
         });

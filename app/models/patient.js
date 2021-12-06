@@ -34,6 +34,21 @@ var PatientSchema = new schema({
         trim: true,
         default: null
     },
+    offer: {
+        type: String,
+        trim: true,
+        default: null
+    },
+    couponCode: {
+        type: String,
+        trim: true,
+        required: true
+    },
+    isCouponUsed: {
+        type: Boolean,
+        trim: true,
+        default: false
+    },
     created_at: {
         type: Date,
         default: Date.now
@@ -46,7 +61,9 @@ var PatientSchema = new schema({
 PatientSchema.index({
     registeredBy: true,
     mobile: true,
-    firstName: true
+    firstName: true,
+    package: true,
+    offer: true
 });
 PatientSchema.pre('save', function(next){
     var patient = this;

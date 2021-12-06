@@ -29,18 +29,21 @@ const Coupon = require('./app/models/coupon');
 const Token = require('./app/models/token');
 const Package = require('./app/models/package');
 const Patient = require('./app/models/patient');
+const Offers = require('./app/models/offers');
 
 //create router
 const UserRouter = require('./app/routes/userRoute')(User, app, Token);
 const CouponRouter = require('./app/routes/couponRoute')(User, Coupon);
 const PackageRouter = require('./app/routes/packageRoute')(Package);
 const PatientRouter = require('./app/routes/patientRoute')(Patient);
+const OfferRouter = require('./app/routes/offersRoute')(Offers, Package);
 
 //define path
 app.use('/api/user', UserRouter);
 app.use('/api/coupon', middleware.newAuthentication, CouponRouter);
 app.use('/api/package', middleware.newAuthentication, PackageRouter);
 app.use('/api/patient', middleware.newAuthentication, PatientRouter);
+app.use('/api/offer', middleware.newAuthentication, OfferRouter);
 
 //-----------------------------//
 mongoose.connect(config.database, { useMongoClient: true }, function (err, conn) {

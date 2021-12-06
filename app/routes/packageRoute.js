@@ -6,9 +6,9 @@ module.exports = function(Package){
         var package = new Package();
         package.packageName.eng = req.body.packageNameEng;
         package.packageName.ar = req.body.packageNameAr;
-        package.price = parseFloat(req.body.price);
+        // package.price = parseFloat(req.body.price);
         package.createdBy = req.decoded._doc._id;
-        package.validity = parseInt(req.body.validity);
+        // package.validity = parseInt(req.body.validity);
         package.save(function(err) {
             if(!err){
                 res.status(200).send({
