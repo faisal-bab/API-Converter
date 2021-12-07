@@ -64,6 +64,7 @@ module.exports = function(Patient){
     });
     patientRouter.get('/markCouponUsed', function(req, res){
         var patientId = req.query.patientId;
+        console.log("test")
         Patient.update({_id: patientId}, {
             $set: {
                 isCouponUsed: true
