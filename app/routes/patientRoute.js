@@ -99,7 +99,11 @@ module.exports = function(Patient){
         if (req.query.couponCode) {
             findQuery.couponCode = req.query.couponCode;
         }
-        Patient.find(findQuery).exec( function(err, patient){
+        if (req.query.registeredBy) {
+            findQuery.registeredBy = req.query.registeredBy;
+        }
+        Patient.find(findQuery).populate('offer')
+        .exec( function(err, patient){
             if(err) {
                 res.status(200).send({
                     status: 411,
