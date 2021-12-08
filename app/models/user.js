@@ -20,9 +20,8 @@ var UserSchema = new schema({
         default: null
     },
     branch: {
-        type: String,
-        trim: true,
-        default: null
+        type: mongoose.SchemaTypes.Mixed,
+        required: true
     },
     role: {
         type: String,
@@ -32,6 +31,10 @@ var UserSchema = new schema({
         required: true,
         enum: ['admin', 'employee'],
         index: true
+    },
+    department: { // will only be there in case when role is employee
+        type: mongoose.SchemaTypes.Mixed,
+        default: null
     },
     password: {
         type: String,
@@ -52,7 +55,8 @@ UserSchema.index({
     role: true,
     userName: true,
     firstName: true,
-    branch: true
+    branch: true,
+    department: true
 });
 UserSchema.pre('save', function(next){
     var user = this;

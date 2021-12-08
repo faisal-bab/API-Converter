@@ -29,8 +29,8 @@ var PatientSchema = new schema({
         default: null,
         required: true
     },
-    package: {
-        type: String,
+    packages: {
+        type: Array,
         trim: true,
         default: null
     },

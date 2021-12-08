@@ -30,6 +30,8 @@ const Token = require('./app/models/token');
 const Package = require('./app/models/package');
 const Patient = require('./app/models/patient');
 const Offers = require('./app/models/offers');
+const Department = require('./app/models/department');
+const Branch = require('./app/models/branch');
 
 //create router
 const UserRouter = require('./app/routes/userRoute')(User, app, Token);
@@ -37,6 +39,8 @@ const CouponRouter = require('./app/routes/couponRoute')(User, Coupon);
 const PackageRouter = require('./app/routes/packageRoute')(Package);
 const PatientRouter = require('./app/routes/patientRoute')(Patient);
 const OfferRouter = require('./app/routes/offersRoute')(Offers, Package);
+const DepartmentRouter = require('./app/routes/departmentRoute')(Department);
+const BranchRouter = require('./app/routes/branchRoute')(Branch);
 
 //define path
 app.use('/api/user', UserRouter);
@@ -44,6 +48,8 @@ app.use('/api/coupon', middleware.newAuthentication, CouponRouter);
 app.use('/api/package', middleware.newAuthentication, PackageRouter);
 app.use('/api/patient', middleware.newAuthentication, PatientRouter);
 app.use('/api/offer', middleware.newAuthentication, OfferRouter);
+app.use('/api/department', middleware.newAuthentication, DepartmentRouter);
+app.use('/api/branch', middleware.newAuthentication, BranchRouter);
 
 //-----------------------------//
 mongoose.connect(config.database, { useMongoClient: true }, function (err, conn) {

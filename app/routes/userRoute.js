@@ -12,6 +12,7 @@ module.exports = function(User, app, Tokens){
         user.branch = req.body.branch;
         user.password = req.body.password;
         user.role = req.body.role;
+        user.department = req.body.department;
         user.save(function(err) {
             if(!err){
                 res.status(200).send({

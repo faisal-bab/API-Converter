@@ -10,7 +10,7 @@ module.exports = function(Patient){
         patient.nationalId = req.body.nationalId;
         patient.mobile = req.body.mobile;
         patient.registeredBy = req.decoded._doc._id;
-        patient.package = req.body.package;
+        patient.packages = req.body.packages;
         patient.offer = req.body.offer;
         const code = voucher_codes.generate({
             length: 8,
@@ -90,6 +90,33 @@ module.exports = function(Patient){
                 });
             }
         });
+    });
+    patientRouter.get('/search', function (req, res) {
+        let findQuery = {};
+        if (req.query.mobile) {
+            findQuery.mobile = req.query.mobile;
+        }
+        if (req.query.couponCode) {
+            findQuery.couponCode = req.query.couponCode;
+        }
+        Patient.find(findQuery).exec( function(err, patient){
+            if(err) {
+                res.status(200).send({
+                    status: 411,
+                    success: false,
+                    message: {
+                        eng: 'Server error.',
+                    },
+                    error: err
+                });
+            } else {
+                res.status(200).send({
+                    status: 201,
+                    success: true,
+                    data: patient
+                });
+            }
+        })
     });
     return patientRouter;
 };
