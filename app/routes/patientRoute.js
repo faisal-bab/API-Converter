@@ -64,10 +64,20 @@ module.exports = function(Patient){
     });
     patientRouter.get('/markCouponUsed', function(req, res){
         var patientId = req.query.patientId;
-        console.log("test")
+        let isUsed = req.query.isUsed ? true : false;
+        if (isUsed && req.decoded._doc.role !== 'admin') {
+            return res.status(200).send({
+                status: 403,
+                success: false,
+                message: {
+                    eng: 'You don\'t have permission to do this action.',
+                },
+                error: err
+            });
+        }
         Patient.update({_id: patientId}, {
             $set: {
-                isCouponUsed: true
+                isCouponUsed: !isUsed
             }
         }, function (err, patient) {
             if(err){

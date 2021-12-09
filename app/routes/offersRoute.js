@@ -45,6 +45,7 @@ module.exports = function(Offers, Package){
                 offer.amount = parseFloat(req.body.amount);
                 offer.validity = req.body.validity;
                 offer.createdBy = req.decoded._doc._id;
+                offer.department = req.body.department;
                 offer.save(function(err) {
                     if(!err){
                         res.status(200).send({
@@ -72,10 +73,16 @@ module.exports = function(Offers, Package){
     });
     offerRouter.get('/offers', function(req, res){
         let findQuery = {};
+        console.log(req.decoded._doc)
+        if (req.decoded._doc.role !== 'admin') {
+            if (req.decoded._doc.department && req.decoded._doc.department._id) {
+                findQuery.department = req.decoded._doc.department._id;
+            }
+        }
         if(req.query.packageId) {
             findQuery.packageId = req.query.packageId;
         }
-        Offers.find(findQuery, function(err, user){
+        Offers.find(findQuery).populate('department').exec( function(err, user) {
             if(err){
                 res.status(200).send({
                     status: 411,

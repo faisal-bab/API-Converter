@@ -25,6 +25,10 @@ var OffersSchema = new schema({
         trim: true,
         required: true
     },
+    department: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Department'
+    },
     amount: {
         type: Number,
         trim: true,
