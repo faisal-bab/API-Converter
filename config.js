@@ -3,6 +3,8 @@ module.exports = {
     secret: "secretString",
     database: "mongodb://delta:delta!1234@3.21.105.155:27017/deltaPromotions", // Devlopment
     username: "Homelab",
-    password: "H@6125b"
+    password: "H@6125b",
+    sender: "HomeLab",
+    sendSMSUrl: "https://bms-api.bab.sa/websmpp/json/sms",
 };
   

@@ -1,7 +1,9 @@
 var express = require('express');
 var voucher_codes = require('voucher-code-generator');
+var moment = require('moment');
+var smsFunction = require('../controllers/sendSMS');
 
-module.exports = function(Patient){
+module.exports = function(Patient, Offer){
     var patientRouter = express.Router();
     patientRouter.post('/create', function(req, res) {
         var patient = new Patient();
@@ -19,6 +21,17 @@ module.exports = function(Patient){
         patient.couponCode = code[0].toUpperCase();
         patient.save(function(err) {
             if(!err){
+                if(req.body.offer) {
+                    Offer.find({ _id: patient.offer}).exec(function(err, offer) {
+                        var expiryDate = moment().add(offer[0].validity, 'days').format('DD MMM YYYY');
+                        var message = `Dear ${patient.firstName}
+Congratulations, you have earned a discount of ${offer[0].amount} SR on ${offer[0].offerName.eng}.
+This coupon is Valid until ${expiryDate}.
+Coupon Code - ${patient.couponCode}`;
+                        var country_code = req.body.countryCode ? req.body.countryCode : '+966';
+                        smsFunction.sendSMS(req.body.mobile, message, 'otp', country_code);
+                    });
+                }
                 res.status(200).send({
                     status: 201,
                     success: true,
