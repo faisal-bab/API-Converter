@@ -19,6 +19,10 @@ var BranchSchema = new schema({
         trim: true,
         required: true
     },
+    isDeleted: {
+        type: Boolean,
+        default: false
+    },
     created_at: {
         type: Date,
         default: Date.now

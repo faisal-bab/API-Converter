@@ -30,7 +30,7 @@ module.exports = function(Package){
         });
     });
     packageRouter.get('/packages', function(req, res){
-        Package.find({}, function(err, user){
+        Package.find({ isDeleted: {$ne: true} }, function(err, user){
             if(err){
                 res.status(200).send({
                     status: 411,
@@ -85,6 +85,33 @@ module.exports = function(Package){
                         eng: 'Packages retreived successfully.'
                     },
                     data: user
+                });
+            }
+        });
+    });
+    packageRouter.post('/delete', function(req, res){
+        let packageId = req.body.id;
+        Package.update({ _id: packageId }, {
+            $set: {
+                isDeleted: true
+            }
+        }, function(err, package){
+            if(err){
+                res.status(200).send({
+                    status: 411,
+                    success: false,
+                    message: {
+                        eng: 'Server error.',
+                    },
+                    error: err
+                });
+            } else {
+                res.status(200).send({
+                    status: 200,
+                    success: true,
+                    message: {
+                        eng: 'Package deleted successfully.'
+                    }
                 });
             }
         });

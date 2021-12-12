@@ -30,7 +30,7 @@ module.exports = function(Department){
         });
     });
     departmentRouter.get('/departments', function(req, res){
-        Department.find({}, function(err, department){
+        Department.find({ isDeleted: {$ne: true} }, function(err, department){
             if(err){
                 res.status(200).send({
                     status: 411,
@@ -48,6 +48,33 @@ module.exports = function(Department){
                         eng: 'Departments retreived successfully.'
                     },
                     data: department
+                });
+            }
+        });
+    });
+    departmentRouter.post('/delete', function(req, res){
+        let departmentId = req.body.id;
+        Department.update({ _id: departmentId}, {
+            $set: {
+                isDeleted: true
+            }
+        }, function(err, department){
+            if(err){
+                res.status(200).send({
+                    status: 411,
+                    success: false,
+                    message: {
+                        eng: 'Server error.',
+                    },
+                    error: err
+                });
+            } else {
+                res.status(200).send({
+                    status: 200,
+                    success: true,
+                    message: {
+                        eng: 'Department deleted successfully.'
+                    }
                 });
             }
         });

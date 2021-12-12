@@ -7,7 +7,8 @@ var UserSchema = new schema({
         type: String,
         trim: true,
         default: null,
-        required: true
+        required: true,
+        unique: true
     },
     firstName: {
         type: String,
@@ -18,6 +19,10 @@ var UserSchema = new schema({
         type: String,
         trim: true,
         default: null
+    },
+    isDeleted: {
+        type: Boolean,
+        default: false
     },
     branch: {
         type: mongoose.SchemaTypes.Mixed,

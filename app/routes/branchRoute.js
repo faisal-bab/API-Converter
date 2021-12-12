@@ -30,7 +30,7 @@ module.exports = function(Branch){
         });
     });
     branchRouter.get('/branches', function(req, res){
-        Branch.find({}, function(err, branch){
+        Branch.find({ isDeleted: {$ne: true} }, function(err, branch){
             if(err){
                 res.status(200).send({
                     status: 411,
@@ -48,6 +48,33 @@ module.exports = function(Branch){
                         eng: 'Branches retreived successfully.'
                     },
                     data: branch
+                });
+            }
+        });
+    });
+    branchRouter.post('/delete', function(req, res){
+        let branchId = req.body.id;
+        Branch.update({ _id: branchId},  {
+            $set: {
+                isDeleted: true
+            }
+        }, function(err, branch){
+            if(err){
+                res.status(200).send({
+                    status: 411,
+                    success: false,
+                    message: {
+                        eng: 'Server error.',
+                    },
+                    error: err
+                });
+            } else {
+                res.status(200).send({
+                    status: 200,
+                    success: true,
+                    message: {
+                        eng: 'Branch deleted successfully.'
+                    }
                 });
             }
         });

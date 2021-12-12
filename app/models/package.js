@@ -25,6 +25,10 @@ var PackageSchema = new schema({
     //     trim: true,
     //     required: true
     // },
+    isDeleted: {
+        type: Boolean,
+        default: false
+    },
     createdBy: {
         type: String,
         trim: true,

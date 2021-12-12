@@ -72,7 +72,7 @@ module.exports = function(Offers, Package){
         });
     });
     offerRouter.get('/offers', function(req, res){
-        let findQuery = {};
+        let findQuery = { isDeleted: {$ne: true} };
         console.log(req.decoded._doc)
         if (req.decoded._doc.role !== 'admin') {
             if (req.decoded._doc.department && req.decoded._doc.department._id) {
@@ -100,6 +100,33 @@ module.exports = function(Offers, Package){
                         eng: 'Offers retreived successfully.'
                     },
                     data: user
+                });
+            }
+        });
+    });
+    offerRouter.post('/delete', function(req, res){
+        let offerId = req.body.id;
+        Offers.update({ _id: offerId}, {
+            $set: {
+                isDeleted: true
+            }
+        }, function(err, package){
+            if(err){
+                res.status(200).send({
+                    status: 411,
+                    success: false,
+                    message: {
+                        eng: 'Server error.',
+                    },
+                    error: err
+                });
+            } else {
+                res.status(200).send({
+                    status: 200,
+                    success: true,
+                    message: {
+                        eng: 'Offer deleted successfully.'
+                    }
                 });
             }
         });

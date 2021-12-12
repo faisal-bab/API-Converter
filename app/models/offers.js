@@ -15,6 +15,10 @@ var OffersSchema = new schema({
             index: 'text'
         }
     },
+    isDeleted: {
+        type: Boolean,
+        default: false
+    },
     packageName: {
         type: String,
         trim: true,

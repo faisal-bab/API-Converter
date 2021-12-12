@@ -109,7 +109,7 @@ module.exports = function(User, app, Tokens){
         });
     });
     userRouter.get('/users', function(req, res){
-        User.find({}, function(err, user){
+        User.find({ isDeleted: {$ne: true}  }, function(err, user){
             if(err){
                 res.status(200).send({
                     status: 411,
@@ -127,6 +127,33 @@ module.exports = function(User, app, Tokens){
                         eng: 'Users retreived successfully.'
                     },
                     data: user
+                });
+            }
+        });
+    });
+    userRouter.post('/delete', function(req, res){
+        let userId = req.body.id;
+        User.update({ _id: userId }, {
+            $set: {
+                isDeleted: true
+            }
+        }, function(err, user){
+            if(err){
+                res.status(200).send({
+                    status: 411,
+                    success: false,
+                    message: {
+                        eng: 'Server error.',
+                    },
+                    error: err
+                });
+            } else {
+                res.status(200).send({
+                    status: 200,
+                    success: true,
+                    message: {
+                        eng: 'User deleted successfully.'
+                    }
                 });
             }
         });
