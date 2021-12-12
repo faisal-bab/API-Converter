@@ -5,7 +5,6 @@ var DepartmentSchema = new schema({
         ar: {
             type: String,
             default: null,
-            required: true,
             index: 'text'
         },
         eng: {
