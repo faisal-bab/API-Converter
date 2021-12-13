@@ -1,6 +1,6 @@
 var express = require('express');
 
-module.exports = function(Package){
+module.exports = function(Package, Offers){
     var packageRouter = express.Router();
     packageRouter.post('/create', function(req, res) {
         var package = new Package();
@@ -89,32 +89,44 @@ module.exports = function(Package){
             }
         });
     });
-    packageRouter.post('/delete', function(req, res){
+    packageRouter.post('/delete',async function(req, res){
         let packageId = req.body.id;
-        Package.update({ _id: packageId }, {
-            $set: {
-                isDeleted: true
-            }
-        }, function(err, package){
-            if(err){
-                res.status(200).send({
-                    status: 411,
-                    success: false,
-                    message: {
-                        eng: 'Server error.',
-                    },
-                    error: err
-                });
-            } else {
-                res.status(200).send({
-                    status: 200,
-                    success: true,
-                    message: {
-                        eng: 'Package deleted successfully.'
-                    }
-                });
-            }
-        });
+        let associatedOffer = await Offers.find({ packageId: packageId }).exec();
+        if(associatedOffer.length > 0) {
+            return res.status(200).send({
+                status: 203,
+                success: false,
+                message: {
+                    eng: `This package is associated with ${associatedOffer.length} offers.`,
+                }
+            });
+        } else {
+            Package.update({ _id: packageId }, {
+                $set: {
+                    isDeleted: true
+                }
+            }, function(err, package){
+                if(err){
+                    res.status(200).send({
+                        status: 411,
+                        success: false,
+                        message: {
+                            eng: 'Server error.',
+                        },
+                        error: err
+                    });
+                } else {
+                    res.status(200).send({
+                        status: 200,
+                        success: true,
+                        message: {
+                            eng: 'Package deleted successfully.'
+                        }
+                    });
+                }
+            });
+        }
+        
     });
     return packageRouter;
 };

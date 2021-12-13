@@ -36,7 +36,7 @@ const Branch = require('./app/models/branch');
 //create router
 const UserRouter = require('./app/routes/userRoute')(User, app, Token);
 const CouponRouter = require('./app/routes/couponRoute')(User, Coupon);
-const PackageRouter = require('./app/routes/packageRoute')(Package);
+const PackageRouter = require('./app/routes/packageRoute')(Package, Offers);
 const PatientRouter = require('./app/routes/patientRoute')(Patient, Offers);
 const OfferRouter = require('./app/routes/offersRoute')(Offers, Package);
 const DepartmentRouter = require('./app/routes/departmentRoute')(Department);
