@@ -25,10 +25,11 @@ module.exports = function(Patient, Offer){
                     Offer.find({ _id: patient.offer}).exec(function(err, offer) {
                         var expiryDate = moment().add(offer[0].validity, 'days').format('DD MMM YYYY');
                         var message = `Dear ${patient.firstName}
-Congratulations, you have earned a discount of ${offer[0].amount} SR on ${offer[0].offerName.eng}.
+Congratulations, you have earned a discount of ${offer[0].amount}SR on ${offer[0].offerName.eng}.
 This coupon is Valid until ${expiryDate}.
 Coupon Code - ${patient.couponCode}`;
                         var country_code = req.body.countryCode ? req.body.countryCode : '+966';
+                        console.log(message)
                         smsFunction.sendSMS(req.body.mobile, message, 'otp', country_code);
                     });
                 }
