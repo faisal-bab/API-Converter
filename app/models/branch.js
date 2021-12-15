@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+const uniqueValidator = require('mongoose-unique-validator');
 var schema = mongoose.Schema;
 var BranchSchema = new schema({
     branchName: {
@@ -9,9 +10,9 @@ var BranchSchema = new schema({
         },
         eng: {
             type: String,
-            default: null,
             required: true,
-            index: 'text'
+            index: 'text',
+            unique: true
         }
     },
     createdBy: {
@@ -33,7 +34,8 @@ var BranchSchema = new schema({
     }
 });
 BranchSchema.index({
-    branchName: true,
-    createdBy: true
+    createdBy: true,
+    branchName: true
 });
+BranchSchema.plugin(uniqueValidator);
 module.exports = mongoose.model('Branch', BranchSchema);

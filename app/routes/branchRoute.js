@@ -17,7 +17,17 @@ module.exports = function(Branch){
                     },
                     data: branch
                 });
+            } else if(err && err.name =='ValidationError'){
+                res.status(200).send({
+                    status: 203,
+                    success: false,
+                    message: {
+                        eng: 'Branch name already exists',
+                    },
+                    error: err
+                });
             } else if(err){
+                console.log(err)
                 res.status(200).send({
                     status: 411,
                     success: false,

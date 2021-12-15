@@ -17,7 +17,16 @@ module.exports = function(Department){
                     },
                     data: department
                 });
-            } else if(err){
+            } else if(err && err.name =='ValidationError'){
+                res.status(200).send({
+                    status: 203,
+                    success: false,
+                    message: {
+                        eng: 'Department name already exists',
+                    },
+                    error: err
+                });
+            } else if(err) {
                 res.status(200).send({
                     status: 411,
                     success: false,

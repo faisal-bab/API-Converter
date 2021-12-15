@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+const uniqueValidator = require('mongoose-unique-validator');
 var schema = mongoose.Schema;
 var DepartmentSchema = new schema({
     departmentName: {
@@ -9,9 +10,9 @@ var DepartmentSchema = new schema({
         },
         eng: {
             type: String,
-            default: null,
             required: true,
-            index: 'text'
+            index: 'text',
+            unique: true
         }
     },
     createdBy: {
@@ -36,4 +37,5 @@ DepartmentSchema.index({
     departmentName: true,
     createdBy: true
 });
+DepartmentSchema.plugin(uniqueValidator);
 module.exports = mongoose.model('Department', DepartmentSchema);
