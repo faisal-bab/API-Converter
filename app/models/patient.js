@@ -29,6 +29,11 @@ var PatientSchema = new schema({
         default: null,
         required: true
     },
+    branchName: {
+        type: String,
+        trim: true,
+        default: null
+    },
     packages: {
         type: Array,
         trim: true,

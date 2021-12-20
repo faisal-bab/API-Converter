@@ -158,5 +158,32 @@ module.exports = function(User, app, Tokens){
             }
         });
     });
+    userRouter.post('/updateBranch', function(req, res){
+        let userId = req.body.id;
+        User.update({ _id: userId }, {
+            $set: {
+                branch: req.body.branch
+            }
+        }, function(err, user){
+            if(err){
+                res.status(200).send({
+                    status: 411,
+                    success: false,
+                    message: {
+                        eng: 'Server error.',
+                    },
+                    error: err
+                });
+            } else {
+                res.status(200).send({
+                    status: 200,
+                    success: true,
+                    message: {
+                        eng: 'User updated successfully.'
+                    }
+                });
+            }
+        });
+    });
     return userRouter;
 };

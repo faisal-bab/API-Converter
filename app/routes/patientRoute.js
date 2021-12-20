@@ -14,6 +14,7 @@ module.exports = function(Patient, Offer){
         patient.registeredBy = req.decoded._doc._id;
         patient.packages = req.body.packages;
         patient.offer = req.body.offer;
+        patient.branchName = req.body.branchName;
         const code = voucher_codes.generate({
             length: 8,
             count: 1
