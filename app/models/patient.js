@@ -1,5 +1,7 @@
 var mongoose = require('mongoose');
 var schema = mongoose.Schema;
+var uniqueValidator = require('mongoose-unique-validator');
+
 var PatientSchema = new schema({
     name: {
         type: String,
@@ -27,6 +29,16 @@ var PatientSchema = new schema({
         trim: true,
         default: null,
         required: true
+    },
+    registrationVisitNo: {
+        type: String,
+        trim: true,
+        required: true,
+        unique: true
+    },
+    verifiedVisitNo: {
+        type: String,
+        trim: true
     },
     verifiedBy: {
         type: mongoose.Schema.Types.ObjectId,
@@ -76,4 +88,5 @@ PatientSchema.pre('save', function(next){
     patient.updated_at = Date.now();
     return next();
 });
+PatientSchema.plugin(uniqueValidator);
 module.exports = mongoose.model('Patient', PatientSchema);

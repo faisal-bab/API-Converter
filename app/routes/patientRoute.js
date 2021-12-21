@@ -14,6 +14,7 @@ module.exports = function(Patient, Offer, Package, User){
         patient.registeredBranch = req.body.registeredBranch;
         patient.package = req.body.package;
         patient.offer = req.body.offer;
+        patient.registrationVisitNo = req.body.registrationVisitNo;
         const code = voucher_codes.generate({
             length: 8,
             count: 1
@@ -91,8 +92,9 @@ Coupon Code - ${patient.couponCode}`;
         Patient.update({_id: patientId}, {
             $set: {
                 isCouponUsed: !isUsed,
-                verifiedBy: req.decoded._doc._id,
-                verifiedBranch: req.query.verifiedBranch
+                verifiedBy: !isUsed ? req.decoded._doc._id : null,
+                verifiedBranch: !isUsed ? req.query.verifiedBranch : null,
+                verifiedVisitNo: !isUsed ? req.query.verifiedVisitNo : null
             }
         }, function (err, patient) {
             if(err){
