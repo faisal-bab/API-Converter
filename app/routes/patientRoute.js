@@ -3,18 +3,17 @@ var voucher_codes = require('voucher-code-generator');
 var moment = require('moment');
 var smsFunction = require('../controllers/sendSMS');
 
-module.exports = function(Patient, Offer){
+module.exports = function(Patient, Offer, Package, User){
     var patientRouter = express.Router();
     patientRouter.post('/create', function(req, res) {
         var patient = new Patient();
-        patient.firstName = req.body.firstName;
-        patient.lastName = req.body.lastName;
+        patient.name = req.body.name;
         patient.nationalId = req.body.nationalId;
         patient.mobile = req.body.mobile;
         patient.registeredBy = req.decoded._doc._id;
-        patient.packages = req.body.packages;
+        patient.registeredBranch = req.body.registeredBranch;
+        patient.package = req.body.package;
         patient.offer = req.body.offer;
-        patient.branchName = req.body.branchName;
         const code = voucher_codes.generate({
             length: 8,
             count: 1
@@ -30,7 +29,6 @@ Congratulations, you have earned a discount of ${offer[0].amount}SR on ${offer[0
 This coupon is Valid until ${expiryDate}.
 Coupon Code - ${patient.couponCode}`;
                         var country_code = req.body.countryCode ? req.body.countryCode : '+966';
-                        console.log(message)
                         smsFunction.sendSMS(req.body.mobile, message, 'otp', country_code);
                     });
                 }
@@ -92,7 +90,9 @@ Coupon Code - ${patient.couponCode}`;
         }
         Patient.update({_id: patientId}, {
             $set: {
-                isCouponUsed: !isUsed
+                isCouponUsed: !isUsed,
+                verifiedBy: req.decoded._doc._id,
+                verifiedBranch: req.query.verifiedBranch
             }
         }, function (err, patient) {
             if(err){
@@ -127,7 +127,32 @@ Coupon Code - ${patient.couponCode}`;
         if (req.query.registeredBy) {
             findQuery.registeredBy = req.query.registeredBy;
         }
-        Patient.find(findQuery).populate('offer')
+        Patient.find(findQuery).populate({ path: 'offer', model: Offer }).populate({ path: 'package', model: Package })
+        .exec( function(err, patient){
+            if(err) {
+                res.status(200).send({
+                    status: 411,
+                    success: false,
+                    message: {
+                        eng: 'Server error.',
+                    },
+                    error: err
+                });
+            } else {
+                res.status(200).send({
+                    status: 201,
+                    success: true,
+                    data: patient
+                });
+            }
+        })
+    });
+    patientRouter.get('/patientById', function (req, res) {
+        let findQuery = {};
+        if (req.query.patientId) {
+            findQuery._id = req.query.patientId;
+        }
+        Patient.find(findQuery).populate({ path: 'offer', model: Offer }).populate({ path: 'package', model: Package }).populate({ path: 'registeredBy', model: User }).populate({ path: 'verifiedBy', model: User })
         .exec( function(err, patient){
             if(err) {
                 res.status(200).send({

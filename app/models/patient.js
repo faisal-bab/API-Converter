@@ -1,16 +1,11 @@
 var mongoose = require('mongoose');
 var schema = mongoose.Schema;
 var PatientSchema = new schema({
-    firstName: {
+    name: {
         type: String,
         trim: true,
         default: null,
         required: true
-    },
-    lastName: {
-        type: String,
-        trim: true,
-        default: null
     },
     nationalId: {
         type: String,
@@ -24,20 +19,27 @@ var PatientSchema = new schema({
         required: true
     },
     registeredBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Users'
+    },
+    registeredBranch: {
         type: String,
         trim: true,
         default: null,
         required: true
     },
-    branchName: {
+    verifiedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Users'
+    },
+    verifiedBranch: {
         type: String,
         trim: true,
         default: null
     },
-    packages: {
-        type: Array,
-        trim: true,
-        default: null
+    package: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Packages'
     },
     offer: {
         type: mongoose.Schema.Types.ObjectId,

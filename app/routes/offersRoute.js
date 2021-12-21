@@ -73,7 +73,6 @@ module.exports = function(Offers, Package){
     });
     offerRouter.get('/offers', function(req, res){
         let findQuery = { isDeleted: {$ne: true} };
-        console.log(req.decoded._doc)
         if (req.decoded._doc.role !== 'admin') {
             if (req.decoded._doc.department && req.decoded._doc.department._id) {
                 findQuery.department = req.decoded._doc.department._id;

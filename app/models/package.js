@@ -30,9 +30,8 @@ var PackageSchema = new schema({
         default: false
     },
     createdBy: {
-        type: String,
-        trim: true,
-        required: true
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Users'
     },
     created_at: {
         type: Date,

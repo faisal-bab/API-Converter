@@ -91,7 +91,7 @@ module.exports = function(Package, Offers){
     });
     packageRouter.post('/delete',async function(req, res){
         let packageId = req.body.id;
-        let associatedOffer = await Offers.find({ packageId: packageId }).exec();
+        let associatedOffer = await Offers.find({ packageId: packageId, isDeleted: false }).exec();
         if(associatedOffer.length > 0) {
             return res.status(200).send({
                 status: 203,
