@@ -1,6 +1,6 @@
 var express = require('express');
 
-module.exports = function(Offers, Package){
+module.exports = function(User, Offers, Package){
     var offerRouter = express.Router();
     offerRouter.post('/create', function(req, res) {
         if(!req.body.packageId) {
@@ -81,7 +81,7 @@ module.exports = function(Offers, Package){
         if(req.query.packageId) {
             findQuery.packageId = req.query.packageId;
         }
-        Offers.find(findQuery).populate('department').exec( function(err, user) {
+        Offers.find(findQuery).populate('department').populate({path: "createdBy", model: User }).populate({path:"packageId", model:Package ,  populate : {path : 'createdBy', model: User, select: "firstName lastName"}}).exec( function(err, user) {
             if(err){
                 res.status(200).send({
                     status: 411,
