@@ -40,9 +40,9 @@ const CampaignPatients = require('./app/models/campaignPatients');
 //create router
 const UserRouter = require('./app/routes/userRoute')(User, app, Token);
 const CouponRouter = require('./app/routes/couponRoute')(User, Coupon);
-const PackageRouter = require('./app/routes/packageRoute')(Package, Offers);
+const PackageRouter = require('./app/routes/packageRoute')( Package, Offers);
 const PatientRouter = require('./app/routes/patientRoute')(Patient, Offers, Package, User);
-const OfferRouter = require('./app/routes/offersRoute')(Offers, Package);
+const OfferRouter = require('./app/routes/offersRoute')(User, Offers, Package);
 const DepartmentRouter = require('./app/routes/departmentRoute')(Department);
 const BranchRouter = require('./app/routes/branchRoute')(Branch);
 const CampaignRouter = require('./app/routes/campaignRoute')(Campaign, Offers, Package, User, CampaignPatients);

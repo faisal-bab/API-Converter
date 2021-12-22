@@ -54,7 +54,12 @@ Coupon Code - ${patient.couponCode}`;
         });
     });
     patientRouter.get('/patients', function(req, res){
-        Patient.find({}, function(err, user){
+        Patient.find({})
+        .populate({ path: 'offer', model: Offer })
+        .populate({ path: 'package', model: Package })
+        .populate({ path: 'registeredBy', model: User })
+        .populate({ path: 'verifiedBy', model: User })
+        .exec(function(err, user){
             if(err){
                 res.status(200).send({
                     status: 411,
