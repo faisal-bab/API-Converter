@@ -34,7 +34,7 @@ var UserSchema = new schema({
         lowercase: true,
         default: null,
         required: true,
-        enum: ['admin', 'employee'],
+        enum: ['admin', 'employee', 'marketing-employee'],
         index: true
     },
     department: { // will only be there in case when role is employee

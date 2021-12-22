@@ -4,6 +4,7 @@ const morgan = require('morgan');
 const config = require('./config');
 const express = require('express');
 const mongoose = require('mongoose');
+const multer = require('multer');
 const bodyParser = require('body-parser');
 const middleware = require('./app/middlewares/middleware');
 
@@ -15,6 +16,7 @@ app.set('superSecret', config.secret);
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
 app.use(bodyParser.json({ limit: '50mb' }));
+app.use(multer().array());
 //-----------------------------//
 // var corsOptions = {
 //     origin: 'https://dev-v2-homelab.beyondtech.club:8080',
@@ -32,6 +34,8 @@ const Patient = require('./app/models/patient');
 const Offers = require('./app/models/offers');
 const Department = require('./app/models/department');
 const Branch = require('./app/models/branch');
+const Campaign = require('./app/models/campaign');
+const CampaignPatients = require('./app/models/campaignPatients');
 
 //create router
 const UserRouter = require('./app/routes/userRoute')(User, app, Token);
@@ -41,6 +45,7 @@ const PatientRouter = require('./app/routes/patientRoute')(Patient, Offers, Pack
 const OfferRouter = require('./app/routes/offersRoute')(Offers, Package);
 const DepartmentRouter = require('./app/routes/departmentRoute')(Department);
 const BranchRouter = require('./app/routes/branchRoute')(Branch);
+const CampaignRouter = require('./app/routes/campaignRoute')(Campaign, Offers, Package, User, CampaignPatients);
 
 //define path
 app.use('/api/user', UserRouter);
@@ -50,6 +55,7 @@ app.use('/api/patient', middleware.newAuthentication, PatientRouter);
 app.use('/api/offer', middleware.newAuthentication, OfferRouter);
 app.use('/api/department', middleware.newAuthentication, DepartmentRouter);
 app.use('/api/branch', middleware.newAuthentication, BranchRouter);
+app.use('/api/campaign', middleware.newAuthentication, CampaignRouter);
 
 //-----------------------------//
 mongoose.connect(config.database, { useMongoClient: true }, function (err, conn) {
