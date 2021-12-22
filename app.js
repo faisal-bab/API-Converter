@@ -45,7 +45,7 @@ const PatientRouter = require('./app/routes/patientRoute')(Patient, Offers, Pack
 const OfferRouter = require('./app/routes/offersRoute')(User, Offers, Package);
 const DepartmentRouter = require('./app/routes/departmentRoute')(Department);
 const BranchRouter = require('./app/routes/branchRoute')(Branch);
-const CampaignRouter = require('./app/routes/campaignRoute')(Campaign, Offers, Package, User, CampaignPatients);
+const CampaignRouter = require('./app/routes/campaignRoute')(Campaign, Offers, Package, User, CampaignPatients, Patient);
 
 //define path
 app.use('/api/user', UserRouter);

@@ -57,6 +57,11 @@ var PatientSchema = new schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Offers'
     },
+    campaign: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Campaign',
+        default: null
+    },
     couponCode: {
         type: String,
         trim: true,

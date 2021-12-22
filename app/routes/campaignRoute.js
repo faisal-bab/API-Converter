@@ -19,7 +19,7 @@ const storage = multer.diskStorage({
     }
 });
 var upload = multer({ storage: storage });
-module.exports = function (Campaign, Offer, Package, User, CampaignPatient) {
+module.exports = function (Campaign, Offer, Package, User, CampaignPatient, Patient) {
     var campaignRouter = express.Router();
     // campaignRouter.post('/create', function (req, res) {
     //     // upload(req, res, function (err) {
@@ -153,7 +153,7 @@ module.exports = function (Campaign, Offer, Package, User, CampaignPatient) {
     //         });
     //     }
     // });
-    campaignRouter.post('/create', function (req, res) {
+    campaignRouter.post('/create', async function (req, res) {
         try {
             var patientDetails = req.body && req.body.file || [];
             var userId = req.decoded._doc._id || req.decoded._id;
@@ -167,25 +167,30 @@ module.exports = function (Campaign, Offer, Package, User, CampaignPatient) {
                 campaign.status = 1;
                 campaign.userId = userId;
 
-                uniquePatientDetails = patientDetails.map(el => {
-                    const index = uniquePatientDetails.findIndex(ele => { return ele && ele.mobile == el.mobile });
+                patientDetails.map(el => {
+                    const index = uniquePatientDetails.findIndex(ele => {
+                        return ele != null && ele.mobile ? ele.mobile == el.mobile : -1
+                    });
                     if (index == -1) {
-                        var campaignPatient = new CampaignPatient();
-                        campaignPatient.name = el.patientName;
-                        campaignPatient.mobile = el.mobile;
-                        campaignPatient.nationalId = el.nationalId;
-                        campaignPatient.userId = userId;
-                        campaignPatient.campaignId = campaign._doc._id;
+                        var patient = new Patient();
+                        patient.name = el.patientName;
+                        patient.mobile = el.mobile;
+                        patient.nationalId = el.nationalId;
+                        patient.registeredBy = userId;
+                        patient.package = req.body.package;
+                        patient.offer = req.body.offer;
+                        patient.campaign = campaign._doc._id;
+                        patient.registrationVisitNo = `MC${Date.now()}`;
+                        patient.registeredBranch = req.body.branch;
                         const code = voucher_codes.generate({
                             length: 8,
                             count: 1
                         });
-                        campaignPatient.couponCode = code;
-                        return campaignPatient;
+                        patient.couponCode = code;
+                        uniquePatientDetails.push(patient);
                     }
                 });
-                console.log(JSON.stringify(uniquePatientDetails))
-                CampaignPatient.create(uniquePatientDetails, function (err, result) {
+                Patient.create(uniquePatientDetails, function (err, result) {
                     if (err) {
                         res.status(200).send({
                             status: 411,
@@ -241,7 +246,7 @@ module.exports = function (Campaign, Offer, Package, User, CampaignPatient) {
         }
     });
     campaignRouter.get('/view', function (req, res) {
-        Campaign.find({isDeleted: false}, function (err, campaigns) {
+        Campaign.find({ isDeleted: false }, function (err, campaigns) {
             if (err) {
                 res.status(200).send({
                     status: 411,
@@ -307,7 +312,7 @@ module.exports = function (Campaign, Offer, Package, User, CampaignPatient) {
                                     data: {}
                                 });
                             } else {
-                                CampaignPatient.find({ campaignId: mongoose.Types.ObjectId(campaignId) }, { _id: 0, mobile: 1, name: 1 })
+                                Patient.find({ campaign: mongoose.Types.ObjectId(campaignId) }, { _id: 0, mobile: 1, name: 1, couponCode: 1 })
                                     .exec(function (err, patients) {
                                         if (err) {
                                             res.status(200).send({
@@ -391,7 +396,7 @@ module.exports = function (Campaign, Offer, Package, User, CampaignPatient) {
     });
     campaignRouter.post('/delete', function (req, res) {
         var campaignId = (req.body.id);
-        Campaign.update({_id: mongoose.Types.ObjectId(campaignId)}, {isDeleted: true, updated_at: Date.now()}, function (err, campaigns) {
+        Campaign.update({ _id: mongoose.Types.ObjectId(campaignId) }, { isDeleted: true, updated_at: Date.now() }, function (err, campaigns) {
             if (err) {
                 res.status(200).send({
                     status: 411,
