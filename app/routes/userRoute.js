@@ -2,7 +2,7 @@ var express = require('express');
 var bcrypt = require('bcrypt-nodejs');
 var jwt = require('jsonwebtoken');
 
-module.exports = function(User, app, Tokens){
+module.exports = function(User, app, Tokens, Package, Offers, Campaign){
     var userRouter = express.Router();
     userRouter.post('/create', function(req, res) {
         var user = new User();
@@ -185,5 +185,69 @@ module.exports = function(User, app, Tokens){
             }
         });
     });
+
+    userRouter.get('/admin-report', async function(req, res){
+        let campaigns = [];
+        let packages = [];
+        let offers = [];
+       await Package.find({ isDeleted: {$ne: true} })
+        .populate({path: "createdBy", model: User, select: "firstName lastName"})
+        .exec(function(err, package){
+            if(err){
+                res.status(200).send({
+                    status: 411,
+                    success: false,
+                    message: {
+                        eng: 'Server error.',
+                    },
+                    error: err
+                });
+            } else {
+              packages = package
+            }
+        });
+        await Offers.find({isDeleted: false}).populate({path: "createdBy", model: User, select: "firstName lastName"}).exec( function(err, offer) {
+            if(err){
+                res.status(200).send({
+                    status: 411,
+                    success: false,
+                    message: {
+                        eng: 'Server error.',
+                    },
+                    error: err
+                });
+            } else {
+               offers = offer;
+            }
+        });
+        await Campaign.find({isDeleted: false})
+        .populate({path: "userId", model: User, select: "firstName lastName"})
+        .exec(function (err, campaign) {
+            if (err) {
+                res.status(200).send({
+                    status: 411,
+                    success: false,
+                    message: {
+                        eng: 'Server error.',
+                    },
+                    error: err
+                });
+            } else {
+                campaigns = campaign
+                res.status(200).send({
+                    status: 200,
+                    success: true,
+                    message: {
+                        eng: 'Campaigns retreived successfully.'
+                    },
+                    data:[ {
+                    campaign : campaigns,
+                    package : packages,
+                    offer : offers,
+                    }]
+                });
+            }
+        });
+    })
     return userRouter;
 };

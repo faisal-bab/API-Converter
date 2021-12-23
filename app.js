@@ -38,7 +38,7 @@ const Campaign = require('./app/models/campaign');
 const CampaignPatients = require('./app/models/campaignPatients');
 
 //create router
-const UserRouter = require('./app/routes/userRoute')(User, app, Token);
+const UserRouter = require('./app/routes/userRoute')(User, app, Token, Package, Offers, Campaign);
 const CouponRouter = require('./app/routes/couponRoute')(User, Coupon);
 const PackageRouter = require('./app/routes/packageRoute')( Package, Offers);
 const PatientRouter = require('./app/routes/patientRoute')(Patient, Offers, Package, User);
