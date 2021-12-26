@@ -65,10 +65,10 @@ var CampaignSchema = new schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Package'
     },
-    offer: {
+    offer: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Offers'
-    },
+    }],
     created_at: {
         type: Date,
         default: Date.now
