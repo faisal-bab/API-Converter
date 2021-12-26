@@ -185,6 +185,61 @@ module.exports = function(User, app, Tokens, Package, Offers, Campaign){
             }
         });
     });
+    userRouter.post('/updatePassword', function(req, res){
+        let userId = req.body.id;
+        User.findOne({ _id: userId }, function(err, user) {
+            if(err){
+                res.status(200).send({
+                    status: 411,
+                    success: false,
+                    message: {
+                        eng: 'Server error.',
+                    },
+                    error: err
+                });
+            } else if(!user) {
+                res.status(200).send({
+                    status: 411,
+                    success: false,
+                    message: {
+                        eng: 'Could not found user',
+                    },
+                });
+            } else {
+                user.password = req.body.password;
+                user.save(function(err) {
+                    if(!err){
+                        res.status(200).send({
+                            status: 200,
+                            success: true,
+                            message: {
+                                eng: 'Password changed successfully.',
+                            },
+                            data: user
+                        });
+                    } else if(err.errors.password){
+                        res.status(200).send({
+                            status: 411,
+                            success: false,
+                            message: {
+                                eng: 'password is required.'
+                            }
+                        });
+                    }
+                    else if(err){
+                        res.status(200).send({
+                            status: 411,
+                            success: false,
+                            message: {
+                                eng: 'Server error.',
+                            },
+                            error: err
+                        });
+                    }
+                });
+            }
+        });
+    });
 
     userRouter.get('/admin-report', async function(req, res){
         let campaigns = [];
