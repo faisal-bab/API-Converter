@@ -53,7 +53,11 @@ var PatientSchema = new schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Packages'
     },
-    offer: {
+    offer: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Offers'
+    }],
+    selectedOffer: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Offers'
     },

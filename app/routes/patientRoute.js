@@ -97,6 +97,7 @@ Coupon Code - ${patient.couponCode}`;
         Patient.update({_id: patientId}, {
             $set: {
                 isCouponUsed: !isUsed,
+                selectedOffer: !isUsed ? req.query.selectedOffer : null,
                 verifiedBy: !isUsed ? req.decoded._doc._id : null,
                 verifiedBranch: !isUsed ? req.query.verifiedBranch : null,
                 verifiedVisitNo: !isUsed ? req.query.verifiedVisitNo : null
@@ -134,7 +135,7 @@ Coupon Code - ${patient.couponCode}`;
         if (req.query.registeredBy) {
             findQuery.registeredBy = req.query.registeredBy;
         }
-        Patient.find(findQuery).populate({ path: 'offer', model: Offer }).populate({ path: 'package', model: Package })
+        Patient.find(findQuery).populate({ path: 'offer', model: Offer }).populate({ path: 'selectedOffer', model: Offer }).populate({ path: 'package', model: Package }).populate({ path: 'registeredBy', model: User }).populate({ path: 'verifiedBy', model: User })
         .exec( function(err, patient){
             if(err) {
                 res.status(200).send({
