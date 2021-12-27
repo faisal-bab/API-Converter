@@ -47,7 +47,16 @@ module.exports = function(User, Offers, Package){
                 offer.createdBy = req.decoded._doc._id;
                 offer.department = req.body.department;
                 offer.save(function(err) {
-                    if(!err){
+                    if(err && err.errors && (err.errors['offerName.ar'] || err.errors['offerName.eng'])) {
+                        res.status(200).send({
+                            status: 203,
+                            success: false,
+                            message: {
+                                eng: 'Offer Name should be unique',
+                            },
+                            error: err
+                        });
+                    } else if(!err){
                         res.status(200).send({
                             status: 201,
                             success: true,

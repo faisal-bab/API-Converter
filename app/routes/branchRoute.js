@@ -4,8 +4,8 @@ module.exports = function(Branch){
     var branchRouter = express.Router();
     branchRouter.post('/create', function(req, res) {
         var branch = new Branch();
-        branch.branchName.eng = req.body.branchNameEng;
-        branch.branchName.ar = req.body.branchNameAr;
+        branch.branchName.eng = req.body.branchNameEng.trim();
+        // branch.branchName.ar = req.body.branchNameAr;
         branch.createdBy = req.decoded._doc._id;
         branch.save(function(err) {
             if(!err){

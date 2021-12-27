@@ -25,7 +25,7 @@ module.exports = function(Patient, Offer, Package, User){
                 if(req.body.offer) {
                     Offer.find({ _id: patient.offer}).exec(function(err, offer) {
                         var expiryDate = moment().add(offer[0].validity, 'days').format('DD MMM YYYY');
-                        var message = `Dear ${patient.firstName}
+                        var message = `Dear ${patient.name}
 Congratulations, you have earned a discount of ${offer[0].amount}SR on ${offer[0].offerName.eng}.
 This coupon is Valid until ${expiryDate}.
 Coupon Code - ${patient.couponCode}`;
@@ -40,6 +40,15 @@ Coupon Code - ${patient.couponCode}`;
                         eng: 'patient registered successfully.',
                     },
                     data: patient
+                });
+            } else if(err && err.errors && err.errors.registrationVisitNo) {
+                res.status(200).send({
+                    status: 203,
+                    success: false,
+                    message: {
+                        eng: 'Visit No should be unique',
+                    },
+                    error: err
                 });
             } else if(err) {
                 res.status(200).send({
@@ -103,7 +112,16 @@ Coupon Code - ${patient.couponCode}`;
                 verifiedVisitNo: !isUsed ? req.query.verifiedVisitNo : null
             }
         }, function (err, patient) {
-            if(err){
+            if(err && err.errors && err.errors.verifiedVisitNo) {
+                res.status(200).send({
+                    status: 203,
+                    success: false,
+                    message: {
+                        eng: 'Visit No should be unique',
+                    },
+                    error: err
+                });
+            } else if(err){
                 res.status(200).send({
                     status: 411,
                     success: false,

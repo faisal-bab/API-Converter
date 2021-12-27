@@ -12,7 +12,8 @@ var BranchSchema = new schema({
             type: String,
             required: true,
             index: 'text',
-            unique: true
+            unique: true,
+            uniqueCaseInsensitive: true
         }
     },
     createdBy: {

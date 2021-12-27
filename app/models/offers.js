@@ -1,18 +1,25 @@
 var mongoose = require('mongoose');
 var schema = mongoose.Schema;
+var uniqueValidator = require('mongoose-unique-validator');
 var OffersSchema = new schema({
     offerName: {
         ar: {
             type: String,
             default: null,
             required: true,
-            index: 'text'
+            index: 'text',
+            unique: true,
+            trim: true,
+            uniqueCaseInsensitive: true
         },
         eng: {
             type: String,
             default: null,
             required: true,
-            index: 'text'
+            index: 'text',
+            unique: true,
+            trim: true,
+            uniqueCaseInsensitive: true
         }
     },
     isDeleted: {
@@ -62,4 +69,5 @@ OffersSchema.index({
     packageName: true,
     createdBy: true
 });
+OffersSchema.plugin(uniqueValidator);
 module.exports = mongoose.model('Offers', OffersSchema);

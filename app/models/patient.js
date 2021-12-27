@@ -34,11 +34,14 @@ var PatientSchema = new schema({
         type: String,
         trim: true,
         required: true,
-        unique: true
+        unique: true,
+        uniqueCaseInsensitive: true
     },
     verifiedVisitNo: {
         type: String,
-        trim: true
+        trim: true,
+        unique: true,
+        uniqueCaseInsensitive: true
     },
     verifiedBy: {
         type: mongoose.Schema.Types.ObjectId,

@@ -17,6 +17,15 @@ module.exports = function(Package, Offers){
                     },
                     data: package
                 });
+            } else if(err && err.errors && (err.errors['packageName.ar'] || err.errors['packageName.eng'])) {
+                res.status(200).send({
+                    status: 203,
+                    success: false,
+                    message: {
+                        eng: 'Package Name should be unique',
+                    },
+                    error: err
+                });
             } else if(err){
                 res.status(200).send({
                     status: 411,

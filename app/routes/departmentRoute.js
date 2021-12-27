@@ -4,8 +4,8 @@ module.exports = function(Department){
     var departmentRouter = express.Router();
     departmentRouter.post('/create', function(req, res) {
         var department = new Department();
-        department.departmentName.eng = req.body.departmentNameEng;
-        department.departmentName.ar = req.body.departmentNameAr;
+        department.departmentName.eng = req.body.departmentNameEng.trim();
+        // department.departmentName.ar = req.body.departmentNameAr;
         department.createdBy = req.decoded._doc._id;
         department.save(function(err) {
             if(!err){

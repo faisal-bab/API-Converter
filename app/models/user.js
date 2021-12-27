@@ -8,7 +8,8 @@ var UserSchema = new schema({
         trim: true,
         default: null,
         required: true,
-        unique: true
+        unique: true,
+        uniqueCaseInsensitive: true
     },
     firstName: {
         type: String,

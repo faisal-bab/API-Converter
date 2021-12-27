@@ -203,7 +203,16 @@ module.exports = function (Campaign, Offer, Package, User, CampaignPatient, Pati
                         });
                     } else {
                         campaign.save(function (err, result) {
-                            if (err) {
+                            if(err && err.errors && err.errors.name) {
+                                res.status(200).send({
+                                    status: 203,
+                                    success: false,
+                                    message: {
+                                        eng: 'Campaign Name should be unique',
+                                    },
+                                    error: err
+                                });
+                            } else if (err) {
                                 res.status(200).send({
                                     status: 411,
                                     success: false,
@@ -337,14 +346,24 @@ module.exports = function (Campaign, Offer, Package, User, CampaignPatient, Pati
                                             var expiryDate = moment().add(campaign.offer.validity, 'days').format('DD MMM YYYY');
 
                                             if(req.body.message) {
+                                                const replaceConfig = {
+                                                    '@name': '<%- name %>',
+                                                    '@coupon': '<%- couponCode %>',
+                                                    '@expiry': '<%- expiry %>',
+                                                    '@campaign': '<%- campaign.name %>',
+                                                    '@package': '<%- campaign.package.packageName.eng %>'
+                                                }
+                                                var templatedMessage = req.body.message;
+                                                Object.keys(replaceConfig).forEach(function(key, index) {
+                                                    templatedMessage = templatedMessage.replace(new RegExp(key, 'g'), replaceConfig[key])
+                                                });
                                                 patients.forEach(element => {
                                                     // console.log(JSON.stringify({...element._doc, expiryDate, campaign}))
                                         //             var message = `Dear ${element.name}
                                         // Congratulations, you have earned a discount of ${campaign.offer.amount}SR on ${campaign.offer.offerName.eng}.
                                         // This coupon is Valid until ${expiryDate}.
                                         // Coupon Code - ${element.couponCode}`;
-                                                    const message = ejs.render(req.body.message, {...element._doc, expiryDate, campaign});
-                                                    console.log(message);
+                                                    const message = ejs.render(templatedMessage, {...element._doc, expiryDate, campaign});
                                                     var country_code = req.body.countryCode ? req.body.countryCode : '+966';
                                                     smsFunction.sendSMS(element.mobile, message, 'otp', country_code);
                                                 });
@@ -423,101 +442,5 @@ module.exports = function (Campaign, Offer, Package, User, CampaignPatient, Pati
             }
         });
     });
-    // campaignRouter.post('/test', function (req, res) {
-    //     let option = {
-    //         "name": "shailaja",
-    //         "mobile": "9989029960",
-    //         "couponCode": "iaIiD4X0",
-    //         "expiryDate": "26 Dec 2021",
-    //         "campaign": {
-    //           "_id": "61c86e01b497e7008429cdc3",
-    //           "userId": "61c313f34c0a7c1f6ce30d6d",
-    //           "package": {
-    //             "_id": "61c185fd59da21705a391fed",
-    //             "createdBy": "61af04cb782e550a76135f77",
-    //             "__v": 0,
-    //             "updated_at": "2021-12-21T07:45:01.050Z",
-    //             "created_at": "2021-12-21T07:45:01.050Z",
-    //             "isDeleted": false,
-    //             "packageName": {
-    //               "eng": "Skincare",
-    //               "ar": "Skincare"
-    //             }
-    //           },
-    //           "__v": 0,
-    //           "updated_at": "2021-12-26T13:28:33.798Z",
-    //           "created_at": "2021-12-26T13:28:33.123Z",
-    //           "offer": [
-    //             {
-    //               "_id": "61c1862259da21705a391fee",
-    //               "department": "61c039bb7120740e08638510",
-    //               "createdBy": "61af04cb782e550a76135f77",
-    //               "validity": 25,
-    //               "amount": 100,
-    //               "packageName": "Skincare",
-    //               "__v": 0,
-    //               "updated_at": "2021-12-21T07:45:38.789Z",
-    //               "created_at": "2021-12-21T07:45:38.789Z",
-    //               "packageId": [
-    //                 "61c185fd59da21705a391fed"
-    //               ],
-    //               "isDeleted": false,
-    //               "offerName": {
-    //                 "eng": "hair treatment",
-    //                 "ar": "hair treatment"
-    //               }
-    //             },
-    //             {
-    //               "_id": "61c32c6f4c0a7c1f6ce30d8f",
-    //               "department": "61c039bb7120740e08638510",
-    //               "createdBy": "61c3283d4c0a7c1f6ce30d8a",
-    //               "validity": 10,
-    //               "amount": 2000,
-    //               "packageName": "package 1",
-    //               "__v": 0,
-    //               "updated_at": "2021-12-22T13:47:27.090Z",
-    //               "created_at": "2021-12-22T13:47:27.090Z",
-    //               "packageId": [
-    //                 "61c0c1cc3af7f33280c8d92d",
-    //                 "61c185fd59da21705a391fed",
-    //                 "61c2bcf1d60778125c503de0"
-    //               ],
-    //               "isDeleted": false,
-    //               "offerName": {
-    //                 "eng": "offer new",
-    //                 "ar": "offer new ar"
-    //               }
-    //             },
-    //             {
-    //               "_id": "61c4769a61f06828893914ce",
-    //               "department": "61b9d1c2dd5b32293ff36431",
-    //               "createdBy": "61af04cb782e550a76135f77",
-    //               "validity": 2,
-    //               "amount": 10,
-    //               "packageName": "Skincare",
-    //               "__v": 0,
-    //               "updated_at": "2021-12-23T13:16:10.544Z",
-    //               "created_at": "2021-12-23T13:16:10.544Z",
-    //               "packageId": [
-    //                 "61c185fd59da21705a391fed"
-    //               ],
-    //               "isDeleted": false,
-    //               "offerName": {
-    //                 "eng": "third offer",
-    //                 "ar": "third offer"
-    //               }
-    //             }
-    //           ],
-    //           "status": 1,
-    //           "date": "2021-12-26 18:58:10",
-    //           "isDeleted": false,
-    //           "name": "testing"
-    //         }
-    //       };
-    //     if (req.body.message) {
-    //         const mess = ejs.render(req.body.message, option)
-    //         console.log(mess)
-    //     }
-    // })
     return campaignRouter;
 };

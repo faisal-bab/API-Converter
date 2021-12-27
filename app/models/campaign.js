@@ -7,7 +7,9 @@ var CampaignSchema = new schema({
         type: String,
         trim: true,
         default: null,
-        required: true
+        required: true,
+        unique: true,
+        uniqueCaseInsensitive: true
     },
     // patientName: {
     //     type: String,
