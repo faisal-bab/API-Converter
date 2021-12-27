@@ -256,7 +256,7 @@ module.exports = function (Campaign, Offer, Package, User, CampaignPatient, Pati
         }
     });
     campaignRouter.get('/view', function (req, res) {
-        Campaign.find({ isDeleted: false }).sort('-updated_at').exec(function (err, campaigns) {
+        Campaign.find({ isDeleted: false }).sort('-updated_at').populate({ path: 'package', model: Package }).populate({ path: 'userId', model: User }).populate({ path: 'offer', model: Offer }).exec(function (err, campaigns) {
             if (err) {
                 res.status(200).send({
                     status: 411,

@@ -23,19 +23,18 @@ module.exports = function(User, app, Tokens, Package, Offers, Campaign){
                     },
                     data: user
                 });
-            }
-            else if(err.errors.userName){
+            } else if(err.errors.userName){
                 res.status(200).send({
-                    status: 411,
+                    status: 203,
                     success: false,
                     message: {
-                        eng: 'userName is required.'
+                        eng: 'User Name should be unique.'
                     }
                 });
             }
             else if(err.errors.role){
                 res.status(200).send({
-                    status: 411,
+                    status: 203,
                     success: false,
                     message: {
                         eng: 'Role is required.'
@@ -44,7 +43,7 @@ module.exports = function(User, app, Tokens, Package, Offers, Campaign){
             }
             else if(err.errors.password){
                 res.status(200).send({
-                    status: 411,
+                    status: 203,
                     success: false,
                     message: {
                         eng: 'password is required.'
@@ -53,7 +52,7 @@ module.exports = function(User, app, Tokens, Package, Offers, Campaign){
             }
             else if(err){
                 res.status(200).send({
-                    status: 411,
+                    status: 203,
                     success: false,
                     message: {
                         eng: 'Server error.',
