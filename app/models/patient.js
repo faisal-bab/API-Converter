@@ -30,7 +30,14 @@ var PatientSchema = new schema({
         default: null,
         required: true
     },
-    registrationVisitNo: {
+    registrationVisitNoLDM: {
+        type: String,
+        trim: true,
+        required: true,
+        unique: true,
+        uniqueCaseInsensitive: true
+    },
+    registrationVisitNoBlazma: {
         type: String,
         trim: true,
         required: true,

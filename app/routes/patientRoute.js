@@ -14,7 +14,8 @@ module.exports = function(Patient, Offer, Package, User){
         patient.registeredBranch = req.body.registeredBranch;
         patient.package = req.body.package;
         patient.offer = req.body.offer;
-        patient.registrationVisitNo = req.body.registrationVisitNo;
+        patient.registrationVisitNoLDM = req.body.registrationVisitNoLDM;
+        patient.registrationVisitNoBlazma = req.body.registrationVisitNoBlazma;
         const code = voucher_codes.generate({
             length: 8,
             count: 1
@@ -41,12 +42,21 @@ Coupon Code - ${patient.couponCode}`;
                     },
                     data: patient
                 });
-            } else if(err && err.errors && err.errors.registrationVisitNo) {
+            } else if(err && err.errors && err.errors.registrationVisitNoLDM) {
                 res.status(200).send({
                     status: 203,
                     success: false,
                     message: {
-                        eng: 'Visit No should be unique',
+                        eng: 'Visit No (LDM) should be unique',
+                    },
+                    error: err
+                });
+            } else if(err && err.errors && err.errors.registrationVisitNoBlazma) {
+                res.status(200).send({
+                    status: 203,
+                    success: false,
+                    message: {
+                        eng: 'Visit No (Blazma) should be unique',
                     },
                     error: err
                 });
