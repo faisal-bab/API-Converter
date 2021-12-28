@@ -14,8 +14,8 @@ module.exports = function(Patient, Offer, Package, User){
         patient.registeredBranch = req.body.registeredBranch;
         patient.package = req.body.package;
         patient.offer = req.body.offer;
-        patient.registrationVisitNoLDM = req.body.registrationVisitNoLDM;
-        patient.registrationVisitNoBlazma = req.body.registrationVisitNoBlazma;
+        patient.registrationVisitNoLDM = req.body.registrationVisitNoLDM ? req.body.registrationVisitNoLDM : null;
+        patient.registrationVisitNoBlazma = req.body.registrationVisitNoBlazma ? req.body.registrationVisitNoBlazma : null;
         const code = voucher_codes.generate({
             length: 8,
             count: 1
@@ -113,15 +113,22 @@ Coupon Code - ${patient.couponCode}`;
                 error: err
             });
         }
+        let updateObj = {
+            isCouponUsed: !isUsed,
+            verifiedBy: !isUsed ? req.decoded._doc._id : null,
+            verifiedBranch: !isUsed ? req.query.verifiedBranch : null
+        };
+        if (req.query.selectedOffer) {
+            updateObj.selectedOffer = !isUsed ? req.query.selectedOffer : null
+        }
+        if (req.query.verifiedVisitNoLDM) {
+            updateObj.verifiedVisitNoLDM = !isUsed ? req.query.verifiedVisitNoLDM : null
+        }
+        if (req.query.verifiedVisitNoBlazma) {
+            updateObj.verifiedVisitNoBlazma = !isUsed ? req.query.verifiedVisitNoBlazma : null
+        }
         Patient.update({_id: patientId}, {
-            $set: {
-                isCouponUsed: !isUsed,
-                selectedOffer: !isUsed ? req.query.selectedOffer : null,
-                verifiedBy: !isUsed ? req.decoded._doc._id : null,
-                verifiedBranch: !isUsed ? req.query.verifiedBranch : null,
-                verifiedVisitNoLDM: !isUsed ? req.query.verifiedVisitNoLDM : null,
-                verifiedVisitNoBlazma: !isUsed ? req.query.verifiedVisitNoBlazma : null
-            }
+            $set: updateObj
         }, function (err, patient) {
             if(err && err.errors && err.errors.verifiedVisitNoLDM) {
                 res.status(200).send({

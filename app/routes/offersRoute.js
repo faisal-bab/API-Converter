@@ -46,6 +46,7 @@ module.exports = function(User, Offers, Package){
                 offer.validity = req.body.validity;
                 offer.createdBy = req.decoded._doc._id;
                 offer.department = req.body.department;
+                offer.visitType = req.body.visitType ? req.body.visitType : 'all';
                 offer.save(function(err) {
                     if(err && err.errors && (err.errors['offerName.ar'] || err.errors['offerName.eng'])) {
                         res.status(200).send({

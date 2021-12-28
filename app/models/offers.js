@@ -31,6 +31,13 @@ var OffersSchema = new schema({
         trim: true,
         required: true
     },
+    visitType: {
+        type: String,
+        trim: true,
+        required: true,
+        default: 'all',
+        enum: ['all', 'ldm', 'blazma'],
+    },
     packageId: {
         type: Array,
         trim: true,
