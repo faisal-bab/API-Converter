@@ -183,6 +183,7 @@ module.exports = function (Campaign, Offer, Package, User, CampaignPatient, Pati
                         patient.campaign = campaign._doc._id;
                         patient.registrationVisitNo = `MC${Date.now()}`;
                         patient.registeredBranch = req.body.branch;
+                        patient.expiresOn = moment(req.body.date).format('DD MMM YYYY');
                         const code = voucher_codes.generate({
                             length: 8,
                             count: 1
@@ -322,7 +323,7 @@ module.exports = function (Campaign, Offer, Package, User, CampaignPatient, Pati
                                     data: {}
                                 });
                             } else {
-                                Patient.find({ campaign: mongoose.Types.ObjectId(campaignId) }, { _id: 0, mobile: 1, name: 1, couponCode: 1 })
+                                Patient.find({ campaign: mongoose.Types.ObjectId(campaignId) }, { _id: 0, mobile: 1, name: 1, couponCode: 1, expiresOn: 1 })
                                     .exec(function (err, patients) {
                                         if (err) {
                                             res.status(200).send({
@@ -343,7 +344,7 @@ module.exports = function (Campaign, Offer, Package, User, CampaignPatient, Pati
                                                 data: {}
                                             });
                                         } else {
-                                            var expiryDate = moment().add(campaign.offer.validity, 'days').format('DD MMM YYYY');
+                                            // var expiryDate = moment().add(campaign.offer.validity, 'days').format('DD MMM YYYY');
 
                                             // if(req.body.message) {
                                                 const replaceConfig = {
@@ -360,10 +361,11 @@ module.exports = function (Campaign, Offer, Package, User, CampaignPatient, Pati
                                                 patients.forEach(element => {
                                                     // console.log(JSON.stringify({...element._doc, expiryDate, campaign}))
                                                     var message = `Dear ${element.name}
-                                        Congratulations, you have earned a discount of ${campaign.offer[0].amount}SR on ${campaign.package.packageName.eng}.
-                                        This coupon is Valid until ${expiryDate}.
-                                        Coupon Code - ${element.couponCode}`;
+Congratulations, you have earned a discount of ${campaign.offer[0].amount}SR on ${campaign.package.packageName.eng}.
+This coupon is Valid until ${element.expiresOn}.
+Coupon Code - ${element.couponCode}`;
                                                     // const message = ejs.render(message, {...element._doc, expiryDate, campaign});
+                                                    console.log(message);
                                                     var country_code = req.body.countryCode ? req.body.countryCode : '+966';
                                                     smsFunction.sendSMS(element.mobile, message, 'otp', country_code);
                                                 });

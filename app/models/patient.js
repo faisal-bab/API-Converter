@@ -90,6 +90,10 @@ var PatientSchema = new schema({
         trim: true,
         default: false
     },
+    expiresOn: {
+        type: String,
+        trim: true
+    },
     created_at: {
         type: Date,
         default: Date.now
