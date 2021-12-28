@@ -33,18 +33,22 @@ var PatientSchema = new schema({
     registrationVisitNoLDM: {
         type: String,
         trim: true,
-        required: true,
         unique: true,
         uniqueCaseInsensitive: true
     },
     registrationVisitNoBlazma: {
         type: String,
         trim: true,
-        required: true,
         unique: true,
         uniqueCaseInsensitive: true
     },
-    verifiedVisitNo: {
+    verifiedVisitNoLDM: {
+        type: String,
+        trim: true,
+        unique: true,
+        uniqueCaseInsensitive: true
+    },
+    verifiedVisitNoBlazma: {
         type: String,
         trim: true,
         unique: true,

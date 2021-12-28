@@ -119,15 +119,25 @@ Coupon Code - ${patient.couponCode}`;
                 selectedOffer: !isUsed ? req.query.selectedOffer : null,
                 verifiedBy: !isUsed ? req.decoded._doc._id : null,
                 verifiedBranch: !isUsed ? req.query.verifiedBranch : null,
-                verifiedVisitNo: !isUsed ? req.query.verifiedVisitNo : null
+                verifiedVisitNoLDM: !isUsed ? req.query.verifiedVisitNoLDM : null,
+                verifiedVisitNoBlazma: !isUsed ? req.query.verifiedVisitNoBlazma : null
             }
         }, function (err, patient) {
-            if(err && err.errors && err.errors.verifiedVisitNo) {
+            if(err && err.errors && err.errors.verifiedVisitNoLDM) {
                 res.status(200).send({
                     status: 203,
                     success: false,
                     message: {
-                        eng: 'Visit No should be unique',
+                        eng: 'Visit No (LDM) should be unique',
+                    },
+                    error: err
+                });
+            } if(err && err.errors && err.errors.verifiedVisitNoBlazma) {
+                res.status(200).send({
+                    status: 203,
+                    success: false,
+                    message: {
+                        eng: 'Visit No (Blazma) should be unique',
                     },
                     error: err
                 });
