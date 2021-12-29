@@ -63,7 +63,7 @@ module.exports = function(User, app, Tokens, Package, Offers, Campaign){
         });
     });
     userRouter.post('/login', function(req, res){
-        User.findOne({userName: req.body.userName}, function(err, user){
+        User.findOne({userName: req.body.userName, isDeleted: {$ne: true}}, function(err, user){
             if(!user){
                 res.status(200).send({
                     status: 404,

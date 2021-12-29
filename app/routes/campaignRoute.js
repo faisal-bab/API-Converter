@@ -184,6 +184,8 @@ module.exports = function (Campaign, Offer, Package, User, CampaignPatient, Pati
                         patient.registrationVisitNo = `MC${Date.now()}`;
                         patient.registeredBranch = req.body.branch;
                         patient.expiresOn = moment(req.body.date).format('DD MMM YYYY');
+                        patient.expiresOn = moment(req.body.date).format('DD MMM YYYY');
+                        patient.waitingForLaunch = true;
                         const code = voucher_codes.generate({
                             length: 8,
                             count: 1
@@ -301,7 +303,7 @@ module.exports = function (Campaign, Offer, Package, User, CampaignPatient, Pati
                 Campaign.findOne({ _id: mongoose.Types.ObjectId(campaignId) })
                     .populate('package')
                     .populate('offer')
-                    .exec(function (err, campaign) {
+                    .exec(async function (err, campaign) {
                         if (err) {
                             res.status(200).send({
                                 status: 411,
@@ -323,6 +325,9 @@ module.exports = function (Campaign, Offer, Package, User, CampaignPatient, Pati
                                     data: {}
                                 });
                             } else {
+                                await Patient.updateMany({ campaign: mongoose.Types.ObjectId(campaignId) }, {
+                                    $set: { waitingForLaunch: false }
+                                }).exec();
                                 Patient.find({ campaign: mongoose.Types.ObjectId(campaignId) }, { _id: 0, mobile: 1, name: 1, couponCode: 1, expiresOn: 1 })
                                     .exec(function (err, patients) {
                                         if (err) {

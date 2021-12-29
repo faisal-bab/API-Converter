@@ -80,6 +80,11 @@ var PatientSchema = new schema({
         ref: 'Campaign',
         default: null
     },
+    waitingForLaunch: {
+        type: Boolean,
+        trim: true,
+        default: false
+    },
     couponCode: {
         type: String,
         trim: true,

@@ -74,7 +74,7 @@ Coupon Code - ${patient.couponCode}`;
         });
     });
     patientRouter.get('/patients', function(req, res){
-        Patient.find({})
+        Patient.find({waitingForLaunch: { $ne: true }})
         .populate({ path: 'offer', model: Offer })
         .populate({ path: 'package', model: Package })
         .populate({ path: 'registeredBy', model: User })
@@ -171,7 +171,11 @@ Coupon Code - ${patient.couponCode}`;
         });
     });
     patientRouter.get('/search', function (req, res) {
-        let findQuery = {};
+        let findQuery = {
+            waitingForLaunch: {
+                $ne: true
+            }
+        };
         if (req.query.mobile) {
             findQuery.mobile = req.query.mobile;
         }
