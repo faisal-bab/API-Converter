@@ -16,7 +16,6 @@ module.exports = function(Patient, Offer, Package, User){
         patient.offer = req.body.offer;
         patient.registrationVisitNoLDM = req.body.registrationVisitNoLDM ? req.body.registrationVisitNoLDM : null;
         patient.registrationVisitNoBlazma = req.body.registrationVisitNoBlazma ? req.body.registrationVisitNoBlazma : null;
-        patient.expiresOn = moment().add(offer[0].validity, 'days').format('DD MMM YYYY');
         const code = voucher_codes.generate({
             length: 8,
             count: 1
@@ -27,6 +26,8 @@ module.exports = function(Patient, Offer, Package, User){
                 if(req.body.offer) {
                     Offer.find({ _id: patient.offer}).exec(function(err, offer) {
                         var expiryDate = moment().add(offer[0].validity, 'days').format('DD MMM YYYY');
+                        patient.expiresOn = expiryDate;
+                        patient.save();
                         var message = `Dear ${patient.name}
 Congratulations, you have earned a discount of ${offer[0].amount}SR on ${offer[0].offerName.eng}.
 This coupon is Valid until ${expiryDate}.
