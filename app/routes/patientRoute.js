@@ -25,7 +25,7 @@ module.exports = function(Patient, Offer, Package, User){
             if(!err){
                 if(req.body.offer) {
                     Offer.find({ _id: patient.offer}).exec(function(err, offer) {
-                        var expiryDate = moment().add(offer[0].validity, 'days').format('DD MMM YYYY');
+                        var expiryDate = moment.utc().add(offer[0].validity, 'days').format('DD MMM YYYY');
                         patient.expiresOn = expiryDate;
                         patient.save();
                         var message = `Dear ${patient.name}
