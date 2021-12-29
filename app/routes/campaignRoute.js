@@ -158,11 +158,12 @@ module.exports = function (Campaign, Offer, Package, User, CampaignPatient, Pati
         try {
             var patientDetails = req.body && req.body.file || [];
             var userId = req.decoded._doc._id || req.decoded._id;
+            const date = moment(req.body.date.split('T')[0]).add({d: 1, h:23, m:59, s:59}).format("YYYY-MM-DD HH:mm:ss");
             if (patientDetails.length > 0) {
                 let uniquePatientDetails = [];
                 var campaign = new Campaign();
                 campaign.name = req.body.name;
-                campaign.date = req.body.date && moment.utc(req.body.date.split(T)[0]).format("YYYY-MM-DD HH:mm:ss");
+                campaign.date = date;
                 campaign.package = req.body.package;
                 campaign.offer = req.body.offer;
                 campaign.status = 1;
@@ -183,8 +184,7 @@ module.exports = function (Campaign, Offer, Package, User, CampaignPatient, Pati
                         patient.campaign = campaign._doc._id;
                         patient.registrationVisitNo = `MC${Date.now()}`;
                         patient.registeredBranch = req.body.branch;
-                        patient.expiresOn = moment.utc(req.body.date).format('DD MMM YYYY');
-                        patient.expiresOn = moment.utc(req.body.date).format('DD MMM YYYY');
+                        patient.expiresOn = moment(date).format('DD MMM YYYY');
                         patient.waitingForLaunch = true;
                         const code = voucher_codes.generate({
                             length: 8,
