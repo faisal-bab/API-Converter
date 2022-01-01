@@ -365,10 +365,14 @@ module.exports = function (Campaign, Offer, Package, User, CampaignPatient, Pati
                                                 // });
                                                 patients.forEach(element => {
                                                     // console.log(JSON.stringify({...element._doc, expiryDate, campaign}))
-                                                    var message = `Dear ${element.name}
-Congratulations, you have earned a discount of ${campaign.offer[0].amount}SR on ${campaign.package.packageName.eng}.
-This coupon is Valid until ${element.expiresOn}.
-Coupon Code - ${element.couponCode}`;
+//                                                     var message = `Dear ${element.name}
+// Congratulations, you have earned a discount of ${campaign.offer[0].amount}SR on ${campaign.package.packageName.eng}.
+// This coupon is Valid until ${element.expiresOn}.
+// Coupon Code - ${element.couponCode}`;
+
+                                                    var message = `عزيزنا عميل مختبرات دلتا،
+بمناسبة السنة الجديدة، وتجديد ولاءنا لعملائنا
+يسرنا منحكم 200 ريال كرصيد على باقاتنا صالحه لغاية 2022/01/31`
                                                     // const message = ejs.render(message, {...element._doc, expiryDate, campaign});
                                                     console.log(message);
                                                     var country_code = req.body.countryCode ? req.body.countryCode : '+966';
