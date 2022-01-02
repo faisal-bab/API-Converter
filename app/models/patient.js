@@ -99,6 +99,12 @@ var PatientSchema = new schema({
         type: String,
         trim: true
     },
+    language: {
+        type: String,
+        trim: true,
+        default: 'eng',
+        enum: ['eng', 'ar'],
+    },
     created_at: {
         type: Date,
         default: Date.now
