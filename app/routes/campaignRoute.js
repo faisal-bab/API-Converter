@@ -351,34 +351,31 @@ module.exports = function (Campaign, Offer, Package, User, CampaignPatient, Pati
                                         } else {
                                             // var expiryDate = moment().add(campaign.offer.validity, 'days').format('DD MMM YYYY');
 
-                                            // if(req.body.message) {
+                                            if(req.body.message) {
                                                 const replaceConfig = {
                                                     '@name': '<%- name %>',
                                                     '@coupon': '<%- couponCode %>',
-                                                    '@expiry': '<%- expiry %>',
+                                                    '@expiry': '<%- expiresOn %>',
                                                     '@campaign': '<%- campaign.name %>',
                                                     '@package': '<%- campaign.package.packageName.eng %>'
                                                 }
-                                                // var templatedMessage = req.body.message;
-                                                // Object.keys(replaceConfig).forEach(function(key, index) {
-                                                //     templatedMessage = templatedMessage.replace(new RegExp(key, 'g'), replaceConfig[key])
-                                                // });
+                                                var templatedMessage = req.body.message;
+                                                Object.keys(replaceConfig).forEach(function(key, index) {
+                                                    templatedMessage = templatedMessage.replace(new RegExp(key, 'g'), replaceConfig[key])
+                                                });
                                                 patients.forEach(element => {
+                                                    console.log(element._doc)
                                                     // console.log(JSON.stringify({...element._doc, expiryDate, campaign}))
 //                                                     var message = `Dear ${element.name}
 // Congratulations, you have earned a discount of ${campaign.offer[0].amount}SR on ${campaign.package.packageName.eng}.
 // This coupon is Valid until ${element.expiresOn}.
 // Coupon Code - ${element.couponCode}`;
-
-                                                    var message = `عزيزنا عميل مختبرات دلتا،
-بمناسبة السنة الجديدة، وتجديد ولاءنا لعملائنا
-يسرنا منحكم 200 ريال كرصيد على باقاتنا صالحه لغاية 2022/01/31`
-                                                    // const message = ejs.render(message, {...element._doc, expiryDate, campaign});
+                                                    const message = ejs.render(templatedMessage, {...element._doc, campaign});
                                                     console.log(message);
                                                     var country_code = req.body.countryCode ? req.body.countryCode : '+966';
                                                     smsFunction.sendSMS(element.mobile, message, 'otp', country_code);
                                                 });
-                                            // }
+                                            }
 
                                             campaign.package = campaign.package._id;
                                             campaign.offer = campaign.offer._id;

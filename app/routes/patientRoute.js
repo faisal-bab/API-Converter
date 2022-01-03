@@ -14,6 +14,7 @@ module.exports = function(Patient, Offer, Package, User){
         patient.registeredBranch = req.body.registeredBranch;
         patient.package = req.body.package;
         patient.offer = req.body.offer;
+        patient.language = req.body.language ? req.body.language : 'eng';
         patient.registrationVisitNoLDM = req.body.registrationVisitNoLDM ? req.body.registrationVisitNoLDM : null;
         patient.registrationVisitNoBlazma = req.body.registrationVisitNoBlazma ? req.body.registrationVisitNoBlazma : null;
         const code = voucher_codes.generate({
@@ -28,10 +29,20 @@ module.exports = function(Patient, Offer, Package, User){
                         var expiryDate = moment.utc().add(offer[0].validity, 'days').format('DD MMM YYYY');
                         patient.expiresOn = expiryDate;
                         patient.save();
-                        var message = `Dear ${patient.name}
-Congratulations, you have earned a discount of ${offer[0].amount}SR on ${offer[0].offerName.eng}.
-This coupon is Valid until ${expiryDate}.
-Coupon Code - ${patient.couponCode}`;
+                        var message = '';
+                        if(req.body.language == 'ar') {
+                            message = `عزيزنا عميل مختبرات دلتا،
+بمناسبة السنة الجديدة، وتجديد ولاءنا لعملائنا
+يسرنا منحكم 200 ريال كرصيد على باقاتنا صالحه لغاية ${expiryDate}`
+                        } else {
+                            message = `Dear Delta Labs client,
+On the occasion of the New Year, and renew our loyalty to our customers
+We are pleased to give you 200 riyals as a credit on our packages, valid up to ${expiryDate}`
+                        }
+//                         var message = `Dear ${patient.name}
+// Congratulations, you have earned a discount of ${offer[0].amount}SR on ${offer[0].offerName.eng}.
+// This coupon is Valid until ${expiryDate}.
+// Coupon Code - ${patient.couponCode}`;
                         var country_code = req.body.countryCode ? req.body.countryCode : '+966';
                         smsFunction.sendSMS(req.body.mobile, message, 'otp', country_code);
                     });
