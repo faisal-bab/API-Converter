@@ -31,13 +31,15 @@ module.exports = function(Patient, Offer, Package, User){
                         patient.save();
                         var message = '';
                         if(req.body.language == 'ar') {
-                            message = `عزيزنا عميل مختبرات دلتا،
-بمناسبة السنة الجديدة، وتجديد ولاءنا لعملائنا
-يسرنا منحكم 200 ريال كرصيد على باقاتنا صالحه لغاية ${expiryDate}`
+                            message = `عزيزي ${patient.name}
+تهانينا ، لقد ربحت خصمًا بقيمة ${offer[0].amount} ريال سعودي على ${offer[0].offerName.eng}.
+هذه القسيمة صالحة حتى ${expiryDate}.
+رمز القسيمة - ${patient.couponCode}`
                         } else {
-                            message = `Dear Delta Labs client,
-On the occasion of the New Year, and renew our loyalty to our customers
-We are pleased to give you 200 riyals as a credit on our packages, valid up to ${expiryDate}`
+                            message = `Dear ${patient.name}
+Congratulations, you have earned a discount of ${offer[0].amount}SR on ${offer[0].offerName.eng}.
+This coupon is Valid until ${expiryDate}.
+Coupon Code - ${patient.couponCode}`;
                         }
 //                         var message = `Dear ${patient.name}
 // Congratulations, you have earned a discount of ${offer[0].amount}SR on ${offer[0].offerName.eng}.
