@@ -218,6 +218,8 @@ Coupon Code - ${patient.couponCode}`;
                     skip += 2000;
                     count -= 2000;
                 }
+            } else {
+                promiseArray.push(Patient.find(findQuery).populate({ path: 'offer', model: Offer }).populate({ path: 'selectedOffer', model: Offer }).populate({ path: 'package', model: Package }).populate({ path: 'registeredBy', model: User }).populate({ path: 'verifiedBy', model: User }).limit(2000))
             }
             // let patient = await Patient.find(findQuery).populate({ path: 'offer', model: Offer }).populate({ path: 'selectedOffer', model: Offer }).populate({ path: 'package', model: Package }).populate({ path: 'registeredBy', model: User }).populate({ path: 'verifiedBy', model: User }).limit(2000).exec();
             // console.log(promiseArray)
