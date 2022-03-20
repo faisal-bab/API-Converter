@@ -184,7 +184,7 @@ Coupon Code - ${patient.couponCode}`;
             }
         });
     });
-    patientRouter.get('/search', function (req, res) {
+    patientRouter.get('/search', async function (req, res) {
         let findQuery = {
             waitingForLaunch: {
                 $ne: true
@@ -199,25 +199,48 @@ Coupon Code - ${patient.couponCode}`;
         if (req.query.registeredBy) {
             findQuery.registeredBy = req.query.registeredBy;
         }
-        Patient.find(findQuery).populate({ path: 'offer', model: Offer }).populate({ path: 'selectedOffer', model: Offer }).populate({ path: 'package', model: Package }).populate({ path: 'registeredBy', model: User }).populate({ path: 'verifiedBy', model: User })
-        .exec( function(err, patient){
-            if(err) {
-                res.status(200).send({
-                    status: 411,
-                    success: false,
-                    message: {
-                        eng: 'Server error.',
-                    },
-                    error: err
-                });
-            } else {
-                res.status(200).send({
-                    status: 201,
-                    success: true,
-                    data: patient
-                });
+        if (req.query.fromDate) {
+            findQuery.created_at = { $gte: req.query.fromDate };
+        }
+        if (req.query.toDate) {
+            findQuery.created_at = { $lte: req.query.toDate };
+        }
+        try {
+            let count = await Patient.find(findQuery).populate({ path: 'offer', model: Offer }).populate({ path: 'selectedOffer', model: Offer }).populate({ path: 'package', model: Package }).populate({ path: 'registeredBy', model: User }).populate({ path: 'verifiedBy', model: User }).count().exec();
+            console.log(count);
+            let promiseArray = [];
+            let skip = 0;
+            if(count > 2000) {
+                console.log("in count")
+                while(count >= 0) {
+                    console.log("in while")
+                    promiseArray.push(Patient.find(findQuery).populate({ path: 'offer', model: Offer }).populate({ path: 'selectedOffer', model: Offer }).populate({ path: 'package', model: Package }).populate({ path: 'registeredBy', model: User }).populate({ path: 'verifiedBy', model: User }).skip(skip).limit(2000))
+                    skip += 2000;
+                    count -= 2000;
+                }
             }
-        })
+            // let patient = await Patient.find(findQuery).populate({ path: 'offer', model: Offer }).populate({ path: 'selectedOffer', model: Offer }).populate({ path: 'package', model: Package }).populate({ path: 'registeredBy', model: User }).populate({ path: 'verifiedBy', model: User }).limit(2000).exec();
+            // console.log(promiseArray)
+            let patientData = await Promise.all(promiseArray);
+            let patient = [];
+            for (let data of patientData) {
+                patient = patient.concat(data);
+            }
+            return res.status(200).send({
+                status: 201,
+                success: true,
+                data: patient
+            });
+        } catch (error) {
+            res.status(200).send({
+                status: 411,
+                success: false,
+                message: {
+                    eng: 'Server error.',
+                },
+                error: error
+            });
+        }
     });
     patientRouter.get('/patientById', function (req, res) {
         let findQuery = {};
