@@ -33,6 +33,22 @@ var CampaignSchema = new schema({
         trim: true,
         default: false
     },
+    isCorporate: {
+        type: Boolean,
+        trim: true,
+        default: false
+    },
+    couponCode: {
+        type: String,
+        trim: true,
+        required: false,
+        default: null
+    },
+    maxNoOfCoupons: {
+        type: Number,
+        required: false,
+        default: null
+    },
     date: {
         type: String,
         trim: true,

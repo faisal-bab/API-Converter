@@ -258,6 +258,67 @@ module.exports = function (Campaign, Offer, Package, User, CampaignPatient, Pati
             });
         }
     });
+
+    campaignRouter.post('/createCorporate', async function (req, res) {
+        try {
+            var userId = req.decoded._doc._id || req.decoded._id;
+            const date = moment(req.body.date.split('T')[0]).add({d: 1, h:23, m:59, s:59}).format("YYYY-MM-DD HH:mm:ss");
+            var campaign = new Campaign();
+            campaign.name = req.body.name;
+            campaign.date = date;
+            campaign.package = req.body.package;
+            campaign.offer = req.body.offer;
+            campaign.status = 2;
+            campaign.userId = userId;
+            campaign.isCorporate = true;                
+            const code = voucher_codes.generate({
+                length: 8,
+                count: 1
+            });
+            campaign.couponCode = code;
+            campaign.maxNoOfCoupons = req.body.maxNoOfCoupons;
+            campaign.save(function (err, result) {
+                if(err && err.errors && err.errors.name) {
+                    res.status(200).send({
+                        status: 203,
+                        success: false,
+                        message: {
+                            eng: 'Corporate Campaign Name should be unique',
+                        },
+                        error: err
+                    });
+                } else if (err) {
+                    res.status(200).send({
+                        status: 411,
+                        success: false,
+                        message: {
+                            eng: 'Server error.',
+                        },
+                        error: err
+                    });
+                } else {
+                    res.status(200).send({
+                        status: 201,
+                        success: true,
+                        message: {
+                            eng: 'Corporate Campaign Added successfully.',
+                        },
+                        data: result
+                    });
+                }
+            });
+        } catch (err) {
+            res.status(200).send({
+                status: 411,
+                success: false,
+                message: {
+                    eng: 'ERROR In Excution Of API',
+                },
+                error: err
+            });
+        }
+    });
+
     campaignRouter.get('/view', function (req, res) {
         Campaign.find({ isDeleted: false }).sort('-updated_at').populate({ path: 'package', model: Package }).populate({ path: 'userId', model: User }).populate({ path: 'offer', model: Offer }).exec(function (err, campaigns) {
             if (err) {
