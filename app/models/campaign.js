@@ -42,6 +42,12 @@ var CampaignSchema = new schema({
         type: String,
         trim: true,
         required: false,
+        default: null,
+        index: true
+    },
+    registeredBranch: {
+        type: String,
+        trim: true,
         default: null
     },
     maxNoOfCoupons: {

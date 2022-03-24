@@ -270,7 +270,8 @@ module.exports = function (Campaign, Offer, Package, User, CampaignPatient, Pati
             campaign.offer = req.body.offer;
             campaign.status = 2;
             campaign.userId = userId;
-            campaign.isCorporate = true;                
+            campaign.isCorporate = true;  
+            campaign.registeredBranch = req.body.branch;              
             const code = voucher_codes.generate({
                 length: 8,
                 count: 1
@@ -303,7 +304,7 @@ module.exports = function (Campaign, Offer, Package, User, CampaignPatient, Pati
                         message: {
                             eng: 'Corporate Campaign Added successfully.',
                         },
-                        data: result
+                        data: campaign
                     });
                 }
             });
