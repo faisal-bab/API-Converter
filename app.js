@@ -46,6 +46,7 @@ const OfferRouter = require('./app/routes/offersRoute')(User, Offers, Package);
 const DepartmentRouter = require('./app/routes/departmentRoute')(Department);
 const BranchRouter = require('./app/routes/branchRoute')(Branch);
 const CampaignRouter = require('./app/routes/campaignRoute')(Campaign, Offers, Package, User, CampaignPatients, Patient);
+const CorporateRouter = require('./app/routes/corporateRoute')(Campaign, Offers, Package, User, CampaignPatients, Patient);
 
 //define path
 app.use('/api/user', UserRouter);
@@ -56,6 +57,7 @@ app.use('/api/offer', middleware.newAuthentication, OfferRouter);
 app.use('/api/department', middleware.newAuthentication, DepartmentRouter);
 app.use('/api/branch', middleware.newAuthentication, BranchRouter);
 app.use('/api/campaign', middleware.newAuthentication, CampaignRouter);
+app.use('/api/corporate', CorporateRouter);
 
 //-----------------------------//
 mongoose.connect(config.database, { useMongoClient: true }, function (err, conn) {
