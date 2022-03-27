@@ -14,7 +14,7 @@ module.exports = function (Campaign, Offer, Package, User, CampaignPatient, Pati
                 }
             });
         }
-        Campaign.find({ isDeleted: false, couponCode: req.query.couponCode }).sort('-updated_at').populate({ path: 'package', model: Package }).populate({ path: 'userId', model: User }).populate({ path: 'offer', model: Offer }).exec(function (err, campaigns) {
+        Campaign.find({ isDeleted: false, couponCode: req.query.couponCode }).sort('-updated_at').populate({ path: 'package', model: Package }).populate({ path: 'userId', model: User }).populate({ path: 'offer', model: Offer }).exec(async function (err, campaigns) {
             if (err) {
                 res.status(200).send({
                     status: 411,
@@ -25,13 +25,15 @@ module.exports = function (Campaign, Offer, Package, User, CampaignPatient, Pati
                     error: err
                 });
             } else {
+                const usedCouponsCount = await Patient.find({couponCode: req.query.couponCode}).count().exec()
                 res.status(200).send({
                     status: 200,
                     success: true,
                     message: {
                         eng: 'Campaign retreived successfully.'
                     },
-                    data: campaigns
+                    data: campaigns,
+                    usedCoupons: usedCouponsCount
                 });
             }
         });
