@@ -56,10 +56,10 @@ module.exports = function (Campaign, Offer, Package, User, CampaignPatient, Pati
             if (patientDetails.length > 0) {
                 let uniquePatientDetails = [];
                 patientDetails.map(el => {
-                    const index = uniquePatientDetails.findIndex(ele => {
-                        return ele != null && ele.mobile ? ele.mobile == el.mobile : -1
-                    });
-                    if (index == -1) {
+                    // const index = uniquePatientDetails.findIndex(ele => {
+                    //     return ele != null && ele.mobile ? ele.mobile == el.mobile : -1
+                    // });
+                    // if (index == -1) {
                         var patient = new Patient();
                         patient.name = el.patientName;
                         patient.mobile = el.mobile;
@@ -73,7 +73,7 @@ module.exports = function (Campaign, Offer, Package, User, CampaignPatient, Pati
                         patient.couponCode = campaign[0]._doc.couponCode;
                         patient.registeredBranch = campaign[0]._doc.registeredBranch;
                         uniquePatientDetails.push(patient);
-                    }
+                    // }
                 });
                 Patient.create(uniquePatientDetails, function (err, result) {
                     if (err) {
