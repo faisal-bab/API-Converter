@@ -199,12 +199,14 @@ Coupon Code - ${patient.couponCode}`;
         if (req.query.registeredBy) {
             findQuery.registeredBy = req.query.registeredBy;
         }
-        if (req.query.fromDate) {
-            findQuery.created_at = { $gte: req.query.fromDate };
+        if (req.query.fromDate && req.query.toDate) {
+            const fromDate = moment(req.query.fromDate).format('YYYY-MM-DDT00:00:00.000+00:00')
+            const toDate = moment(req.query.toDate).format('YYYY-MM-DDT23:59:59.999+00:00')
+            findQuery.created_at = { $gte: fromDate, $lte: toDate };
         }
-        if (req.query.toDate) {
-            findQuery.created_at = { $lte: req.query.toDate };
-        }
+        // if (req.query.toDate) {
+        //     findQuery.created_at = { $lte: req.query.toDate };
+        // }
         try {
             let count = await Patient.find(findQuery).populate({ path: 'offer', model: Offer }).populate({ path: 'selectedOffer', model: Offer }).populate({ path: 'package', model: Package }).populate({ path: 'registeredBy', model: User }).populate({ path: 'verifiedBy', model: User }).populate({ path: 'campaign', model: Campaign, select: 'name isCorporate'}).count().exec();
             console.log(count);
