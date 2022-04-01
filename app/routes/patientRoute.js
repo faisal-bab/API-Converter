@@ -3,7 +3,7 @@ var voucher_codes = require('voucher-code-generator');
 var moment = require('moment');
 var smsFunction = require('../controllers/sendSMS');
 
-module.exports = function(Patient, Offer, Package, User){
+module.exports = function(Patient, Offer, Package, User, Campaign){
     var patientRouter = express.Router();
     patientRouter.post('/create', function(req, res) {
         var patient = new Patient();
@@ -206,7 +206,7 @@ Coupon Code - ${patient.couponCode}`;
             findQuery.created_at = { $lte: req.query.toDate };
         }
         try {
-            let count = await Patient.find(findQuery).populate({ path: 'offer', model: Offer }).populate({ path: 'selectedOffer', model: Offer }).populate({ path: 'package', model: Package }).populate({ path: 'registeredBy', model: User }).populate({ path: 'verifiedBy', model: User }).count().exec();
+            let count = await Patient.find(findQuery).populate({ path: 'offer', model: Offer }).populate({ path: 'selectedOffer', model: Offer }).populate({ path: 'package', model: Package }).populate({ path: 'registeredBy', model: User }).populate({ path: 'verifiedBy', model: User }).populate({ path: 'campaign', model: Campaign, select: 'name isCorporate'}).count().exec();
             console.log(count);
             let promiseArray = [];
             let skip = 0;
@@ -214,12 +214,12 @@ Coupon Code - ${patient.couponCode}`;
                 console.log("in count")
                 while(count >= 0) {
                     console.log("in while")
-                    promiseArray.push(Patient.find(findQuery).populate({ path: 'offer', model: Offer }).populate({ path: 'selectedOffer', model: Offer }).populate({ path: 'package', model: Package }).populate({ path: 'registeredBy', model: User }).populate({ path: 'verifiedBy', model: User }).skip(skip).limit(2000))
+                    promiseArray.push(Patient.find(findQuery).populate({ path: 'offer', model: Offer }).populate({ path: 'selectedOffer', model: Offer }).populate({ path: 'package', model: Package }).populate({ path: 'registeredBy', model: User }).populate({ path: 'verifiedBy', model: User }).populate({ path: 'campaign', model: Campaign, select: 'name isCorporate'}).skip(skip).limit(2000))
                     skip += 2000;
                     count -= 2000;
                 }
             } else {
-                promiseArray.push(Patient.find(findQuery).populate({ path: 'offer', model: Offer }).populate({ path: 'selectedOffer', model: Offer }).populate({ path: 'package', model: Package }).populate({ path: 'registeredBy', model: User }).populate({ path: 'verifiedBy', model: User }).limit(2000))
+                promiseArray.push(Patient.find(findQuery).populate({ path: 'offer', model: Offer }).populate({ path: 'selectedOffer', model: Offer }).populate({ path: 'package', model: Package }).populate({ path: 'registeredBy', model: User }).populate({ path: 'verifiedBy', model: User }).populate({ path: 'campaign', model: Campaign, select: 'name isCorporate'}).limit(2000))
             }
             // let patient = await Patient.find(findQuery).populate({ path: 'offer', model: Offer }).populate({ path: 'selectedOffer', model: Offer }).populate({ path: 'package', model: Package }).populate({ path: 'registeredBy', model: User }).populate({ path: 'verifiedBy', model: User }).limit(2000).exec();
             // console.log(promiseArray)
@@ -268,6 +268,56 @@ Coupon Code - ${patient.couponCode}`;
                 });
             }
         })
+    });
+    patientRouter.post('/approach', function (req, res) {
+        try {
+            let findQuery = {};
+            let updateObj = {};
+            let patientId = req.body.patientId;
+            if (patientId) {
+                findQuery._id = patientId;
+            } else {
+                return res.status(200).send({
+                    status: 411,
+                    success: false,
+                    message: {
+                        eng: 'Patient ID is requried',
+                    },
+                    error: 'Patient ID is requried'
+                });
+            }
+            updateObj.isApproached = true;
+            Patient.update(findQuery, {
+                $set: updateObj
+            }, function (err, patient) {
+                if(err) {
+                    res.status(200).send({
+                        status: 411,
+                        success: false,
+                        message: {
+                            eng: 'Server error.',
+                        },
+                        error: err
+                    });
+                } else {
+                    res.status(200).send({
+                        status: 201,
+                        success: true,
+                        data: patient
+                    });
+                }
+            })
+        } catch (error) {
+            res.status(200).send({
+                status: 411,
+                success: false,
+                message: {
+                    eng: 'Error Occured in Excution of API. Please Check the API.',
+                },
+                error: err
+            });
+        }
+        
     });
     return patientRouter;
 };

@@ -95,6 +95,11 @@ var PatientSchema = new schema({
         trim: true,
         default: false
     },
+    isApproached: {
+        type: Boolean,
+        trim: true,
+        default: false
+    },
     expiresOn: {
         type: String,
         trim: true
