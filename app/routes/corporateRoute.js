@@ -1,5 +1,6 @@
 var express = require('express');
 var moment = require('moment');
+var smsFunction = require('../controllers/sendSMS');
 
 module.exports = function (Campaign, Offer, Package, User, CampaignPatient, Patient) {
     var corporateRouter = express.Router();
@@ -86,7 +87,21 @@ module.exports = function (Campaign, Offer, Package, User, CampaignPatient, Pati
                             error: err
                         });
                     } else {
-                        return res.status(200).send({
+                        uniquePatientDetails.forEach(patient => {
+//                         var message = `السيد ${patient.name}
+// تتمنى مختبرات دلتا الطبية لك موفور الصحة والعافية.
+// لقد تم ترشيحك للحصول على حزمة فتح مجانية.
+// نتشرف بزيارة موقعنا على الإنترنت:
+// https://maps.app.goo.gl/EvxDKXf18YF5sztYA`;
+                        var message = `السيد/ه${patient.name}
+مختبرات دلتا الطبية تتمنى لكم دوام الصحة والعافية.
+تم ترشيحك للحصول على باقة الافتتاح المجانية.
+نتشرف بزيارتك في موقعنا:
+https://maps.app.goo.gl/EvxDKXf18YF5sztYA`
+                        var country_code = '+966';
+                        smsFunction.sendSMS(patient.mobile, message, 'otp', country_code);
+                        });
+                        res.status(200).send({
                             status: 201,
                             success: true,
                             message: {
