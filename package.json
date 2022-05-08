@@ -1,10 +1,9 @@
 {
-  "name": "delta-promotions-backend",
+  "name": "xml-json-parser",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
   "dependencies": {
-    "@mongoosejs/double": "^0.1.1",
     "async": "^2.6.0",
     "axios": "^0.19.2",
     "bcrypt-nodejs": "^0.0.3",
@@ -19,20 +18,13 @@
     "jsonwebtoken": "^7.4.2",
     "mime-types": "^2.1.17",
     "moment": "^2.18.1",
-    "mongoose": "^4.11.10",
-    "mongoose-auto-increment": "^5.0.1",
-    "mongoose-double": "0.0.1",
-    "mongoose-transactions": "^1.0.4",
-    "mongoose-unique-validator": "^1.0.5",
     "morgan": "^1.10.0",
     "multer": "^1.4.4",
     "node-async-loop": "^1.2.2",
     "node-fetch": "^2.6.1",
     "papaparse": "^4.3.6",
     "request": "^2.88.0",
-    "sha1": "^1.1.1",
-    "sha256": "^0.2.0",
-    "voucher-code-generator": "^1.1.1"
+    "xml2js": "^0.4.23"
   },
   "devDependencies": {
     "@types/bcrypt-nodejs": "0.0.31",
