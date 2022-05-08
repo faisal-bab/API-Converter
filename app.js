@@ -1,18 +1,12 @@
 const http = require('http');
 const cors = require('cors');
 const morgan = require('morgan');
-const config = require('./config');
 const express = require('express');
-const mongoose = require('mongoose');
 const multer = require('multer');
 const bodyParser = require('body-parser');
-const middleware = require('./app/middlewares/middleware');
 
 const app = express();
 const port = app.get('port');
-//-----------------------------//
-app.set('superSecret', config.secret);
-//-----------------------------//
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
 app.use(bodyParser.json({ limit: '50mb' }));
@@ -25,54 +19,16 @@ app.use(multer().array());
 app.use(cors());
 app.options('*', cors());
 
-//import models
-const User = require('./app/models/user');
-const Coupon = require('./app/models/coupon');
-const Token = require('./app/models/token');
-const Package = require('./app/models/package');
-const Patient = require('./app/models/patient');
-const Offers = require('./app/models/offers');
-const Department = require('./app/models/department');
-const Branch = require('./app/models/branch');
-const Campaign = require('./app/models/campaign');
-const CampaignPatients = require('./app/models/campaignPatients');
-
 //create router
-const UserRouter = require('./app/routes/userRoute')(User, app, Token, Package, Offers, Campaign);
-const CouponRouter = require('./app/routes/couponRoute')(User, Coupon);
-const PackageRouter = require('./app/routes/packageRoute')( Package, Offers);
-const PatientRouter = require('./app/routes/patientRoute')(Patient, Offers, Package, User, Campaign);
-const OfferRouter = require('./app/routes/offersRoute')(User, Offers, Package);
-const DepartmentRouter = require('./app/routes/departmentRoute')(Department);
-const BranchRouter = require('./app/routes/branchRoute')(Branch);
-const CampaignRouter = require('./app/routes/campaignRoute')(Campaign, Offers, Package, User, CampaignPatients, Patient);
-const CorporateRouter = require('./app/routes/corporateRoute')(Campaign, Offers, Package, User, CampaignPatients, Patient);
+const parser = require('./app/routes/parser')();
 
 //define path
-app.use('/api/user', UserRouter);
-app.use('/api/coupon', middleware.newAuthentication, CouponRouter);
-app.use('/api/package', middleware.newAuthentication, PackageRouter);
-app.use('/api/patient', middleware.newAuthentication, PatientRouter);
-app.use('/api/offer', middleware.newAuthentication, OfferRouter);
-app.use('/api/department', middleware.newAuthentication, DepartmentRouter);
-app.use('/api/branch', middleware.newAuthentication, BranchRouter);
-app.use('/api/campaign', middleware.newAuthentication, CampaignRouter);
-app.use('/api/corporate', CorporateRouter);
-
-//-----------------------------//
-mongoose.connect(config.database, { useMongoClient: true }, function (err, conn) {
-    if (err) {
-        console.log("Mongo Connection Error", err);
-    }
-    if (!err && conn) {
-        console.log("Mongo Connection Established");
-    }
-});
+app.use('/api/parse', parser);
 
 app.get('/', function (req, res) {
     res.json({
         status: 200,
-        message: 'Welcome to the Delta Homelab!'
+        message: 'Welcome to json parser!'
     });
 });
 //-----------------------------//
