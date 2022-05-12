@@ -1,6 +1,24 @@
 var express = require('express');
 var parseString = require('xml2js').parseString;
 var xml2js = require('xml2js');
+var multer = require('multer');
+var mime = require('mime-types');
+
+var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads');
+    },
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + '.' + mime.extension(file.mimetype));
+    }
+});
+
+var _report = [{
+    name: 'image',
+    maxCount: 1
+}];
+var uploadImages = multer({ storage: storage }).fields(_report);
+
 // var xml2js = require('xml2js');
 // var parseString = new xml2js.Parser(xml2js.defaults["0.2"]);
 
@@ -63,6 +81,31 @@ module.exports = function(){
         //         });
         //     }
         // });
+    });
+    parseRouter.post('/upload', function(req, res) {
+        let reportImage = null;
+        uploadImages(req, res, function (err) {
+            if (err) {
+                var msg = 'Server error';
+                res.status(500).send({
+                    success: false,
+                    message: msg,
+                    error: err
+                });
+            } else {
+                if (req.files) {
+                    if (req.files.image) {
+                        // req.body.reportImage = req.files.reportImage[0].filename;
+                        reportImage = req.files.image[0].filename;
+                        res.status(200).send({
+                            success: true,
+                            message: msg,
+                            data: reportImage
+                        });
+                    }
+                }
+            }
+        });
     });
     return parseRouter;
 };

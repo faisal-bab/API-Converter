@@ -10,7 +10,7 @@ const port = app.get('port');
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
 app.use(bodyParser.json({ limit: '50mb' }));
-app.use(multer().array());
+// app.use(multer().array());
 //-----------------------------//
 // var corsOptions = {
 //     origin: 'https://dev-v2-homelab.beyondtech.club:8080',
