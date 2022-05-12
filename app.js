@@ -10,6 +10,8 @@ const port = app.get('port');
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
 app.use(bodyParser.json({ limit: '50mb' }));
+app.use(express.static(__dirname + '/uploads'));
+
 // app.use(multer().array());
 //-----------------------------//
 // var corsOptions = {
