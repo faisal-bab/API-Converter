@@ -84,8 +84,11 @@ module.exports = function(){
     });
     parseRouter.post('/upload', function(req, res) {
         let reportImage = null;
+        console.log("under upload api")
+        console.log(req)
         uploadImages(req, res, function (err) {
             if (err) {
+                console.log("under error", err)
                 var msg = 'Server error';
                 res.status(500).send({
                     success: false,
@@ -93,6 +96,7 @@ module.exports = function(){
                     error: err
                 });
             } else {
+                console.log("under success", req.files)
                 if (req.files) {
                     if (req.files.image) {
                         // req.body.reportImage = req.files.reportImage[0].filename;
