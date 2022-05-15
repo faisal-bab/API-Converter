@@ -6,7 +6,7 @@ var mime = require('mime-types');
 
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, 'uploads');
+        cb(null, '../uploads/');
     },
     filename: function (req, file, cb) {
         cb(null, Date.now() + '.' + mime.extension(file.mimetype));
@@ -96,7 +96,9 @@ module.exports = function(){
                     error: err
                 });
             } else {
+                console.log("under success", res)
                 console.log("under success", req.files)
+                console.log("under success 2", req.file)
                 if (req.files) {
                     if (req.files.image) {
                         // req.body.reportImage = req.files.reportImage[0].filename;
@@ -107,6 +109,11 @@ module.exports = function(){
                             data: reportImage
                         });
                     }
+                } else {
+                    res.status(404).send({
+                        success: true,
+                        message: 'file not found'
+                    });
                 }
             }
         });
