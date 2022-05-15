@@ -19,6 +19,8 @@ var _report = [{
 }];
 var uploadImages = multer({ storage: storage }).fields(_report);
 
+var upload = multer({ storage: storage });
+
 // var xml2js = require('xml2js');
 // var parseString = new xml2js.Parser(xml2js.defaults["0.2"]);
 
@@ -118,5 +120,11 @@ module.exports = function(){
             }
         });
     });
+    parseRouter.post('/sendFile', upload.any(), function(req, res) {
+        console.log(req);
+        console.log(res);
+        console.log(req.files);
+        res.status(200).send({success: true, data: req.files})
+    });    
     return parseRouter;
 };
