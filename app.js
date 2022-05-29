@@ -10,9 +10,7 @@ const app = express();
 const port = app.get('port');
 const API_SERVICE_URL = 'http://51.211.173.51:7673/API/API';
 app.use(morgan('dev'));
-app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
-app.use(bodyParser.json({ limit: '50mb' }));
-app.use(express.static(__dirname + '/uploads'));
+
 
 // app.use(multer().array());
 //-----------------------------//
@@ -29,6 +27,10 @@ app.use('/hamadi', createProxyMiddleware({
         '^/hamadi': ''
     }
 }));
+
+app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(express.static(__dirname + '/uploads'));
 
 //create router
 const parser = require('./app/routes/parser')();
